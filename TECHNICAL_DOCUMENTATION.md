@@ -45,11 +45,16 @@ Legends of Learning/
 │       ├── character_creation.html # Character creation page
 │       ├── character_class_selection.html  # Character class selection
 │       ├── character_image_selection.html  # Character image selection
-│       └── class_details.html     # Class details page
+│       ├── class_details.html     # Class details page
+│       ├── council_chamber.html   # Council chamber interface
+│       ├── create_consequence.html # Consequence creation interface
+│       └── create_reward.html     # Reward creation interface
 └── data/                   # Data storage directory
     ├── users.json         # User accounts and credentials
     ├── classes.json       # Class information
-    └── characters.json    # Student character data
+    ├── characters.json    # Student character data
+    ├── rewards.json       # Reward system data
+    └── consequences.json  # Consequence system data
 ```
 
 ## Data Models
@@ -66,7 +71,7 @@ class User(UserMixin):
 ### Character Model (app/models/character.py)
 ```python
 class Character:
-    def __init__(self, username, character_class, gender, level=1, xp=0)
+    def __init__(self, username, character_class, gender, image_number, level=1, xp=0)
     def get(username)
     def save()
     def add_xp(amount)
@@ -105,10 +110,15 @@ class Class:
 - `/class/<class_code>/delete`: Delete a class
 - `/download_template`: Download student CSV template
 
+### Council Chamber Routes
+- `/council_chamber`: Access the council chamber interface
+- `/create_reward`: Create new rewards
+- `/create_consequence`: Create new consequences
+
 ## Utility Functions (app/utils/helpers.py)
 - `allowed_file(filename)`: Check if file extension is allowed
 - `process_student_csv(file_path, class_id)`: Process student CSV file
-- `get_character_image_path(character_class, gender, level)`: Get character image path
+- `get_character_image_path(character_class, gender, image_number)`: Get character image path
 
 ## Data Structures
 
@@ -141,8 +151,35 @@ class Class:
     "username": {
         "class": "warrior|sorcerer|druid",
         "gender": "male|female",
+        "image_number": 1,
         "level": 1,
         "xp": 0,
+        "created_at": "ISO timestamp"
+    }
+}
+```
+
+### Reward Data (rewards.json)
+```json
+{
+    "reward_id": {
+        "name": "Reward Name",
+        "description": "Reward Description",
+        "xp_value": 100,
+        "created_by": "teacher_username",
+        "created_at": "ISO timestamp"
+    }
+}
+```
+
+### Consequence Data (consequences.json)
+```json
+{
+    "consequence_id": {
+        "name": "Consequence Name",
+        "description": "Consequence Description",
+        "xp_penalty": 50,
+        "created_by": "teacher_username",
         "created_at": "ISO timestamp"
     }
 }
@@ -164,11 +201,16 @@ class Class:
 - `next_level_xp`: XP needed for next level
 - `character_class`: Character class (warrior/sorcerer/druid)
 - `gender`: Character gender
+- `image_number`: Selected character image number
 
 ### Class Details Variables
 - `class_name`: Name of the class
 - `class_code`: Unique identifier for the class
 - `students`: List of student information dictionaries
+
+### Council Chamber Variables
+- `rewards`: List of available rewards
+- `consequences`: List of available consequences
 
 ## Making Changes
 
@@ -213,4 +255,5 @@ class Class:
 - Test all user flows (login, registration, class creation, etc.)
 - Verify data persistence in JSON files
 - Check error handling and user feedback
-- Test with different user types (teacher/student) 
+- Test with different user types (teacher/student)
+- Test reward and consequence system functionality 
