@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Create Reward - Legends of Learning{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Create New Reward</h2>
+        </div>
+        <div class="col-auto">
+            <a href="{{ url_for('view_codex_of_conduct') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Back to Codex of Conduct
+            </a>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-body">
+                    <form id="addRewardForm">
+                        <div class="mb-3">
+                            <label for="rewardName" class="form-label">Reward Name</label>
+                            <input type="text" class="form-control" id="rewardName" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rewardDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="rewardDescription" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="rewardCost" class="form-label">XP Reward</label>
+                            <input type="number" class="form-control" id="rewardCost" min="0" required>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-plus me-2"></i>Create Reward
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn {
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('addRewardForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        formData.append('name', document.getElementById('rewardName').value);
+        formData.append('description', document.getElementById('rewardDescription').value);
+        formData.append('cost', document.getElementById('rewardCost').value);
+        
+        fetch('/api/rewards', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = "{{ url_for('view_codex_of_conduct') }}";
+            } else {
+                alert('Error creating reward: ' + data.message);
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

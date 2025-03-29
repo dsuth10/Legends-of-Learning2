@@ -5,12 +5,25 @@ import json
 import os
 import pandas as pd
 from datetime import datetime
+from app.routes.auth import auth
+from app.routes.dashboard import dashboard_bp
+from app.routes.character import character
+from app.routes.class_management import class_management_bp
+from app.models.user import User
 
 app = Flask(__name__, static_folder='static')
 app.secret_key = 'your-secret-key-here'  # Change this to a secure secret key
+
+# Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'auth.login'
+
+# Register blueprints
+app.register_blueprint(auth)
+app.register_blueprint(dashboard_bp)
+app.register_blueprint(character)
+app.register_blueprint(class_management_bp)
 
 # Ensure data directory exists
 if not os.path.exists('data'):
@@ -20,28 +33,9 @@ if not os.path.exists('data'):
 if not os.path.exists('static/samples'):
     os.makedirs('static/samples')
 
-# User class for Flask-Login
-class User(UserMixin):
-    def __init__(self, username, password_hash, user_type, name=None):
-        self.username = username
-        self.password_hash = password_hash
-        self.user_type = user_type
-        self.name = name or username  # Use username as name if not provided
-
-    def get_id(self):
-        return self.username
-
 @login_manager.user_loader
 def load_user(username):
-    try:
-        with open('data/users.json', 'r') as f:
-            users = json.load(f)
-            if username in users:
-                user_data = users[username]
-                return User(username, user_data['password'], user_data['user_type'], user_data.get('name', username))
-    except FileNotFoundError:
-        pass
-    return None
+    return User.get(username)
 
 def save_users(users):
     with open('data/users.json', 'w') as f:
@@ -69,8 +63,32 @@ def save_characters(characters):
     with open('data/characters.json', 'w') as f:
         json.dump(characters, f)
 
+def load_rewards():
+    try:
+        with open('data/rewards.json', 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+
+def save_rewards(rewards):
+    with open('data/rewards.json', 'w') as f:
+        json.dump(rewards, f)
+
+def load_consequences():
+    try:
+        with open('data/consequences.json', 'r') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        return {}
+
+def save_consequences(consequences):
+    with open('data/consequences.json', 'w') as f:
+        json.dump(consequences, f)
+
 @app.route('/')
 def index():
+    if current_user.is_authenticated:
+        return redirect(url_for('dashboard.dashboard'))
     return redirect(url_for('login'))
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -137,15 +155,13 @@ def character_class_selection():
     
     if request.method == 'POST':
         character_class = request.form.get('character_class')
-        gender = request.form.get('gender')
         
         # Debug logging
         print(f"Form data received in class selection:")
         print(f"character_class: {character_class}")
-        print(f"gender: {gender}")
         print(f"All form data: {request.form}")
         
-        if not character_class or not gender:
+        if not character_class:
             flash('Please select a class')
             return redirect(url_for('character_class_selection'))
         
@@ -169,27 +185,23 @@ def character_image_selection():
         return redirect(url_for('character_creation'))
     
     if request.method == 'POST':
-        character_class = request.form.get('character_class')
-        gender = request.form.get('gender')
         character_image = request.form.get('character_image')
         
         # Debug logging
         print(f"Form data received:")
-        print(f"character_class: {character_class}")
-        print(f"gender: {gender}")
         print(f"character_image: {character_image}")
         
-        if not character_class or not gender or not character_image:
+        if not character_image:
             flash('Please select a character appearance')
             return redirect(url_for('character_image_selection'))
         
-        # Create character data
+        # Create character data using session values
         characters[current_user.username] = {
-            'class': character_class,
-            'gender': gender,
+            'class': session['character_class'],
+            'gender': session['character_gender'],
             'level': 1,
             'xp': 0,
-            'image': f"{character_image}_{character_class}_{gender}_level1.png",
+            'image': f"{character_image}_{session['character_class']}_{session['character_gender']}_level1.png",
             'created_at': datetime.now().isoformat()
         }
         save_characters(characters)
@@ -525,6 +537,331 @@ def delete_student(class_code, username):
     
     flash('Student removed from class successfully.', 'success')
     return redirect(url_for('class_details', class_code=class_code))
+
+@app.route('/codex_of_conduct')
+@login_required
+def view_codex_of_conduct():
+    if current_user.user_type != 'teacher':
+        return redirect(url_for('dashboard'))
+    
+    # Get the teacher's class
+    classes = load_classes()
+    teacher_class = None
+    teacher_class_id = None
+    for class_id, class_data in classes.items():
+        if class_data['teacher'] == current_user.username:
+            teacher_class = class_data
+            teacher_class_id = class_id
+            break
+    
+    if not teacher_class:
+        flash('Please create a class first')
+        return redirect(url_for('dashboard'))
+    
+    # Load rewards and consequences for this class
+    rewards = load_rewards()
+    consequences = load_consequences()
+    class_rewards = {k: v for k, v in rewards.items() if v.get('class_id') == teacher_class_id}
+    class_consequences = {k: v for k, v in consequences.items() if v.get('class_id') == teacher_class_id}
+    
+    # Get list of students with their character data
+    students = {}
+    try:
+        with open('data/users.json', 'r') as f:
+            users = json.load(f)
+        with open('data/characters.json', 'r') as f:
+            characters = json.load(f)
+            for username in teacher_class['students']:
+                if username in users:
+                    students[username] = {
+                        'name': users[username].get('name', username),
+                        'character': characters.get(username, {})
+                    }
+    except FileNotFoundError:
+        pass
+    
+    return render_template('council_chamber.html',
+                         rewards=class_rewards,
+                         consequences=class_consequences,
+                         students=students)
+
+@app.route('/api/rewards', methods=['POST'])
+@login_required
+def create_reward():
+    try:
+        if current_user.user_type != 'teacher':
+            return jsonify({'success': False, 'message': 'Unauthorized'})
+        
+        # Get the teacher's class
+        classes = load_classes()
+        teacher_class = None
+        teacher_class_id = None
+        for class_id, class_data in classes.items():
+            if class_data['teacher'] == current_user.username:
+                teacher_class = class_data
+                teacher_class_id = class_id
+                break
+        
+        if not teacher_class:
+            return jsonify({'success': False, 'message': 'No class found'})
+        
+        # Debug print form data
+        print("Form data received:", request.form)
+        
+        name = request.form.get('name')
+        description = request.form.get('description')
+        cost = request.form.get('cost')
+        
+        # Debug print parsed values
+        print("Parsed values:", {'name': name, 'description': description, 'cost': cost})
+        
+        if not name or not description or not cost:
+            return jsonify({'success': False, 'message': 'Missing required fields'})
+        
+        try:
+            cost = int(cost)
+        except ValueError:
+            return jsonify({'success': False, 'message': 'Cost must be a number'})
+        
+        if cost < 0:
+            return jsonify({'success': False, 'message': 'Cost cannot be negative'})
+        
+        rewards = load_rewards()
+        reward_id = str(len(rewards) + 1)
+        
+        rewards[reward_id] = {
+            'name': name,
+            'description': description,
+            'cost': cost,
+            'class_id': teacher_class_id,
+            'created_at': datetime.now().isoformat()
+        }
+        
+        save_rewards(rewards)
+        return jsonify({'success': True})
+        
+    except Exception as e:
+        print("Error in create_reward:", str(e))  # Debug print the error
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
+
+@app.route('/api/consequences', methods=['POST'])
+@login_required
+def create_consequence():
+    try:
+        if current_user.user_type != 'teacher':
+            return jsonify({'success': False, 'message': 'Unauthorized'})
+        
+        # Get the teacher's class
+        classes = load_classes()
+        teacher_class = None
+        teacher_class_id = None
+        for class_id, class_data in classes.items():
+            if class_data['teacher'] == current_user.username:
+                teacher_class = class_data
+                teacher_class_id = class_id
+                break
+        
+        if not teacher_class:
+            return jsonify({'success': False, 'message': 'No class found'})
+        
+        # Debug print form data
+        print("Form data received:", request.form)
+        
+        name = request.form.get('name')
+        description = request.form.get('description')
+        penalty = request.form.get('penalty')
+        
+        # Debug print parsed values
+        print("Parsed values:", {'name': name, 'description': description, 'penalty': penalty})
+        
+        if not name or not description or not penalty:
+            return jsonify({'success': False, 'message': 'Missing required fields'})
+        
+        try:
+            penalty = int(penalty)
+        except ValueError:
+            return jsonify({'success': False, 'message': 'Penalty must be a number'})
+        
+        if penalty < 0:
+            return jsonify({'success': False, 'message': 'Penalty cannot be negative'})
+        
+        consequences = load_consequences()
+        consequence_id = str(len(consequences) + 1)
+        
+        consequences[consequence_id] = {
+            'name': name,
+            'description': description,
+            'penalty': penalty,
+            'class_id': teacher_class_id,
+            'created_at': datetime.now().isoformat()
+        }
+        
+        save_consequences(consequences)
+        return jsonify({'success': True})
+        
+    except Exception as e:
+        print("Error in create_consequence:", str(e))  # Debug print the error
+        return jsonify({'success': False, 'message': f'Server error: {str(e)}'}), 500
+
+@app.route('/api/rewards/<reward_id>', methods=['DELETE'])
+@login_required
+def delete_reward(reward_id):
+    if current_user.user_type != 'teacher':
+        return jsonify({'success': False, 'message': 'Unauthorized'})
+    
+    rewards = load_rewards()
+    if reward_id not in rewards:
+        return jsonify({'success': False, 'message': 'Reward not found'})
+    
+    # Verify the reward belongs to the teacher's class
+    classes = load_classes()
+    teacher_class = None
+    teacher_class_id = None
+    for class_id, class_data in classes.items():
+        if class_data['teacher'] == current_user.username:
+            teacher_class = class_data
+            teacher_class_id = class_id
+            break
+    
+    if not teacher_class or rewards[reward_id]['class_id'] != teacher_class_id:
+        return jsonify({'success': False, 'message': 'Unauthorized'})
+    
+    del rewards[reward_id]
+    save_rewards(rewards)
+    return jsonify({'success': True})
+
+@app.route('/api/consequences/<consequence_id>', methods=['DELETE'])
+@login_required
+def delete_consequence(consequence_id):
+    if current_user.user_type != 'teacher':
+        return jsonify({'success': False, 'message': 'Unauthorized'})
+    
+    consequences = load_consequences()
+    if consequence_id not in consequences:
+        return jsonify({'success': False, 'message': 'Consequence not found'})
+    
+    # Verify the consequence belongs to the teacher's class
+    classes = load_classes()
+    teacher_class = None
+    teacher_class_id = None
+    for class_id, class_data in classes.items():
+        if class_data['teacher'] == current_user.username:
+            teacher_class = class_data
+            teacher_class_id = class_id
+            break
+    
+    if not teacher_class or consequences[consequence_id]['class_id'] != teacher_class_id:
+        return jsonify({'success': False, 'message': 'Unauthorized'})
+    
+    del consequences[consequence_id]
+    save_consequences(consequences)
+    return jsonify({'success': True})
+
+@app.route('/api/rewards/assign', methods=['POST'])
+@login_required
+def assign_reward():
+    if current_user.user_type != 'teacher':
+        return jsonify({'success': False, 'message': 'Unauthorized'})
+    
+    data = request.get_json()
+    reward_id = data.get('reward_id')
+    student_id = data.get('student_id')
+    
+    if not reward_id or not student_id:
+        return jsonify({'success': False, 'message': 'Missing required fields'})
+    
+    # Get the teacher's class
+    classes = load_classes()
+    teacher_class = None
+    teacher_class_id = None
+    for class_id, class_data in classes.items():
+        if class_data['teacher'] == current_user.username:
+            teacher_class = class_data
+            teacher_class_id = class_id
+            break
+    
+    if not teacher_class:
+        return jsonify({'success': False, 'message': 'No class found'})
+    
+    # Verify the reward exists and belongs to the teacher's class
+    rewards = load_rewards()
+    if reward_id not in rewards or rewards[reward_id]['class_id'] != teacher_class_id:
+        return jsonify({'success': False, 'message': 'Invalid reward'})
+    
+    # Verify the student exists in the class
+    if student_id not in teacher_class.get('students', {}):
+        return jsonify({'success': False, 'message': 'Student not found'})
+    
+    # Get the reward XP amount
+    reward_xp = rewards[reward_id]['cost']
+    
+    # Update student's XP
+    characters = load_characters()
+    if student_id in characters:
+        characters[student_id]['xp'] += reward_xp
+        save_characters(characters)
+    
+    return jsonify({'success': True})
+
+@app.route('/api/consequences/assign', methods=['POST'])
+@login_required
+def assign_consequence():
+    if current_user.user_type != 'teacher':
+        return jsonify({'success': False, 'message': 'Unauthorized'})
+    
+    data = request.get_json()
+    consequence_id = data.get('consequence_id')
+    student_id = data.get('student_id')
+    
+    if not consequence_id or not student_id:
+        return jsonify({'success': False, 'message': 'Missing required fields'})
+    
+    # Get the teacher's class
+    classes = load_classes()
+    teacher_class = None
+    teacher_class_id = None
+    for class_id, class_data in classes.items():
+        if class_data['teacher'] == current_user.username:
+            teacher_class = class_data
+            teacher_class_id = class_id
+            break
+    
+    if not teacher_class:
+        return jsonify({'success': False, 'message': 'No class found'})
+    
+    # Verify the consequence exists and belongs to the teacher's class
+    consequences = load_consequences()
+    if consequence_id not in consequences or consequences[consequence_id]['class_id'] != teacher_class_id:
+        return jsonify({'success': False, 'message': 'Invalid consequence'})
+    
+    # Verify the student exists in the class
+    if student_id not in teacher_class.get('students', {}):
+        return jsonify({'success': False, 'message': 'Student not found'})
+    
+    # Get the consequence penalty
+    consequence_penalty = consequences[consequence_id]['penalty']
+    
+    # Update student's XP
+    characters = load_characters()
+    if student_id in characters:
+        characters[student_id]['xp'] = max(0, characters[student_id]['xp'] - consequence_penalty)
+        save_characters(characters)
+    
+    return jsonify({'success': True})
+
+@app.route('/create_reward')
+@login_required
+def view_create_reward():
+    if current_user.user_type != 'teacher':
+        return redirect(url_for('dashboard'))
+    return render_template('create_reward.html')
+
+@app.route('/create_consequence')
+@login_required
+def view_create_consequence():
+    if current_user.user_type != 'teacher':
+        return redirect(url_for('dashboard'))
+    return render_template('create_consequence.html')
 
 if __name__ == '__main__':
     app.run(debug=True) 

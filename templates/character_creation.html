@@ -8,12 +8,12 @@
         <div class="card">
             <div class="card-body">
                 <h2 class="card-title text-center mb-4">Create Your Character</h2>
-                <form method="POST" action="{{ url_for('character_creation') }}">
+                <form method="POST" action="{{ url_for('character.character_creation') }}" id="genderForm">
                     <div class="mb-4">
                         <h4 class="mb-3">Choose Your Gender</h4>
                         <div class="row g-3">
                             <div class="col-md-6">
-                                <div class="card h-100">
+                                <div class="card h-100 gender-option" data-gender="male">
                                     <div class="card-body text-center">
                                         <i class="fas fa-mars fa-3x mb-3 text-primary"></i>
                                         <h5 class="card-title">Male</h5>
@@ -28,13 +28,13 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <div class="card h-100">
+                                <div class="card h-100 gender-option" data-gender="female">
                                     <div class="card-body text-center">
                                         <i class="fas fa-venus fa-3x mb-3 text-danger"></i>
                                         <h5 class="card-title">Female</h5>
                                         <div class="form-check">
                                             <input class="form-check-input" type="radio" name="gender" 
-                                                   id="female" value="female">
+                                                   id="female" value="female" required>
                                             <label class="form-check-label" for="female">
                                                 Select Female
                                             </label>
@@ -62,21 +62,31 @@
 .card:hover {
     transform: translateY(-5px);
 }
-.form-check-input:checked + .card {
+.gender-option.selected {
     border: 2px solid #4CAF50;
 }
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('genderForm');
+    const genderOptions = document.querySelectorAll('.gender-option');
+    
     // Make cards clickable to select radio buttons
-    document.querySelectorAll('.card').forEach(card => {
+    genderOptions.forEach(card => {
         card.addEventListener('click', function() {
+            // Remove selected class from all cards
+            genderOptions.forEach(c => {
+                c.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            this.classList.add('selected');
+            
+            // Check the radio button
             const radio = this.querySelector('input[type="radio"]');
             if (radio) {
                 radio.checked = true;
-                // Trigger change event to update styling
-                radio.dispatchEvent(new Event('change'));
             }
         });
     });

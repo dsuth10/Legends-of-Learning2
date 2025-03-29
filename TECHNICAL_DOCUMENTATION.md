@@ -19,23 +19,96 @@
 
 ```
 Legends of Learning/
-├── app.py                 # Main application file
-├── data/                  # Data storage directory
-│   ├── users.json        # User accounts and credentials
-│   ├── classes.json      # Class information
-│   └── characters.json   # Student character data
-├── static/               # Static files
-│   ├── images/          # Image assets
-│   └── samples/         # Sample files (e.g., CSV templates)
-└── templates/           # HTML templates
-    ├── base.html        # Base template with common elements
-    ├── login.html       # Login page
-    ├── create_account.html  # Account creation page
-    ├── teacher_dashboard.html  # Teacher dashboard
-    ├── student_dashboard.html  # Student dashboard
-    ├── character_creation.html # Character creation page
-    └── class_details.html     # Class details page
+├── run.py                    # Application entry point
+├── app/                      # Main application package
+│   ├── __init__.py          # Application factory
+│   ├── models/              # Data models
+│   │   ├── user.py          # User model
+│   │   ├── character.py     # Character model
+│   │   └── class_model.py   # Class model
+│   ├── routes/              # Route handlers
+│   │   ├── auth.py          # Authentication routes
+│   │   ├── dashboard.py     # Dashboard routes
+│   │   ├── character.py     # Character management routes
+│   │   └── class_management.py  # Class management routes
+│   ├── utils/               # Utility functions
+│   │   └── helpers.py       # Helper functions
+│   ├── static/              # Static files
+│   │   ├── images/         # Image assets
+│   │   └── samples/        # Sample files (e.g., CSV templates)
+│   └── templates/          # HTML templates
+│       ├── base.html       # Base template with common elements
+│       ├── login.html      # Login page
+│       ├── create_account.html  # Account creation page
+│       ├── teacher_dashboard.html  # Teacher dashboard
+│       ├── student_dashboard.html  # Student dashboard
+│       ├── character_creation.html # Character creation page
+│       ├── character_class_selection.html  # Character class selection
+│       ├── character_image_selection.html  # Character image selection
+│       └── class_details.html     # Class details page
+└── data/                   # Data storage directory
+    ├── users.json         # User accounts and credentials
+    ├── classes.json       # Class information
+    └── characters.json    # Student character data
 ```
+
+## Data Models
+
+### User Model (app/models/user.py)
+```python
+class User(UserMixin):
+    def __init__(self, username, password_hash, user_type, name=None)
+    def get(username)
+    def check_password(password)
+    def save()
+```
+
+### Character Model (app/models/character.py)
+```python
+class Character:
+    def __init__(self, username, character_class, gender, level=1, xp=0)
+    def get(username)
+    def save()
+    def add_xp(amount)
+```
+
+### Class Model (app/models/class_model.py)
+```python
+class Class:
+    def __init__(self, class_id, name, teacher, students=None)
+    def get(class_id)
+    def save()
+    def add_student(username)
+    def remove_student(username)
+```
+
+## Routes
+
+### Authentication Routes (app/routes/auth.py)
+- `/login`: Handle user login
+- `/logout`: Handle user logout
+- `/create_account`: Create new teacher account
+
+### Dashboard Routes (app/routes/dashboard.py)
+- `/dashboard`: Main dashboard (redirects based on user type)
+- `/teacher_dashboard`: Teacher-specific dashboard
+- `/student_dashboard`: Student-specific dashboard
+
+### Character Routes (app/routes/character.py)
+- `/character_creation`: Start character creation process
+- `/character_class_selection`: Select character class and gender
+- `/character_image_selection`: Select character appearance
+
+### Class Management Routes (app/routes/class_management.py)
+- `/create_class`: Create new class with student CSV
+- `/class/<class_code>`: View class details
+- `/class/<class_code>/delete`: Delete a class
+- `/download_template`: Download student CSV template
+
+## Utility Functions (app/utils/helpers.py)
+- `allowed_file(filename)`: Check if file extension is allowed
+- `process_student_csv(file_path, class_id)`: Process student CSV file
+- `get_character_image_path(character_class, gender, level)`: Get character image path
 
 ## Data Structures
 
@@ -75,51 +148,6 @@ Legends of Learning/
 }
 ```
 
-## Key Components
-
-### User Management
-- **User Class**: `User(UserMixin)`
-  - Attributes:
-    - `username`: Unique identifier
-    - `password_hash`: Hashed password
-    - `user_type`: "teacher" or "student"
-    - `name`: Display name (defaults to username)
-
-### Authentication
-- **Login Manager**: Flask-Login
-- **Session Management**: Flask session
-- **Password Hashing**: Werkzeug's `generate_password_hash` and `check_password_hash`
-
-### Data Loading/Saving Functions
-- `load_users()`: Load user data from users.json
-- `save_users(users)`: Save user data to users.json
-- `load_classes()`: Load class data from classes.json
-- `save_classes(classes)`: Save class data to classes.json
-- `load_characters()`: Load character data from characters.json
-- `save_characters(characters)`: Save character data to characters.json
-
-## Routes
-
-### Authentication Routes
-- `/login`: Handle user login
-- `/logout`: Handle user logout
-- `/create_account`: Create new teacher account
-
-### Dashboard Routes
-- `/dashboard`: Main dashboard (redirects based on user type)
-- `/teacher_dashboard`: Teacher-specific dashboard
-- `/student_dashboard`: Student-specific dashboard
-
-### Class Management Routes
-- `/create_class`: Create new class with student CSV
-- `/class/<class_code>`: View class details
-- `/class/<class_code>/delete`: Delete a class
-- `/class/<class_code>/student/<username>/edit`: Edit student information
-- `/class/<class_code>/student/<username>/delete`: Remove student from class
-
-### Character Management Routes
-- `/character_creation`: Create student character
-
 ## Template Variables
 
 ### Common Variables (base.html)
@@ -136,8 +164,6 @@ Legends of Learning/
 - `next_level_xp`: XP needed for next level
 - `character_class`: Character class (warrior/sorcerer/druid)
 - `gender`: Character gender
-- `activities`: List of available activities
-- `achievements`: List of earned achievements
 
 ### Class Details Variables
 - `class_name`: Name of the class
@@ -147,55 +173,24 @@ Legends of Learning/
 ## Making Changes
 
 ### Adding New Features
-1. Add new route in `app.py`
-2. Create necessary template if required
-3. Update data structures in JSON files if needed
-4. Add any required static files (CSS, JS, images)
+1. Add new model in `app/models/` if needed
+2. Add new routes in `app/routes/`
+3. Create necessary templates in `app/templates/`
+4. Add any required static files
 5. Update this technical documentation
 
 ### Modifying Existing Features
-1. Update route logic in `app.py`
-2. Modify corresponding template
-3. Update data structures if necessary
+1. Update relevant model in `app/models/`
+2. Modify corresponding routes in `app/routes/`
+3. Update templates in `app/templates/`
 4. Update this technical documentation
 
 ### Adding New Data Fields
-1. Update relevant JSON data structure
-2. Modify User class if adding user-related fields
+1. Update relevant model in `app/models/`
+2. Update data structures in JSON files
 3. Update templates to display new data
 4. Add data migration logic if needed
 5. Update this technical documentation
-
-## Documentation Maintenance
-
-### When to Update
-This technical documentation should be updated whenever you:
-1. Add new features or routes
-2. Modify existing functionality
-3. Change data structures
-4. Add new dependencies
-5. Update the project structure
-6. Modify security measures
-7. Change development guidelines
-
-### What to Update
-1. **Project Structure**: Add/remove files and directories
-2. **Data Structures**: Update JSON schemas
-3. **Routes**: Add/modify route descriptions
-4. **Template Variables**: Update available variables
-5. **Key Components**: Add/modify component descriptions
-6. **Tech Stack**: Update dependencies and versions
-7. **Development Guidelines**: Add/modify best practices
-8. **Security Considerations**: Update security measures
-
-### How to Update
-1. Keep the documentation in sync with code changes
-2. Use clear, concise language
-3. Include code examples where relevant
-4. Maintain consistent formatting
-5. Update all affected sections
-6. Review changes for accuracy
-7. Test documentation against actual code
 
 ## Security Considerations
 - All routes except login and create_account require authentication
@@ -214,7 +209,7 @@ This technical documentation should be updated whenever you:
 7. Keep this technical documentation up to date
 
 ## Testing
-- Run the application in debug mode for development
+- Run the application using `python run.py`
 - Test all user flows (login, registration, class creation, etc.)
 - Verify data persistence in JSON files
 - Check error handling and user feedback

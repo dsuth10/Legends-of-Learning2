@@ -8,8 +8,7 @@
         <div class="card">
             <div class="card-body">
                 <h2 class="card-title text-center mb-4">Choose Your Class</h2>
-                <form method="POST" action="{{ url_for('character_class_selection') }}">
-                    <input type="hidden" name="gender" value="{{ gender }}">
+                <form method="POST" action="{{ url_for('character.character_class_selection') }}">
                     <div class="mb-4">
                         <h4 class="mb-3">Select Your Character Class</h4>
                         <div class="row g-3">

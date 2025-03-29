@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+
+{% block title %}The Codex of Conduct - Legends of Learning{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-dark text-light">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="text-center flex-grow-1">
+                            <h1 class="display-4 mb-3">The Codex of Conduct</h1>
+                            <p class="lead">Manage the rewards and consequences for your classroom realm</p>
+                        </div>
+                        <div class="col-auto">
+                            <a href="{{ url_for('view_codex_of_conduct') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Codex of Conduct
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Students Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-users me-2"></i>Students
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Level</th>
+                                    <th>XP</th>
+                                    <th>Reward</th>
+                                    <th>Consequence</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for student_id, student in students.items() %}
+                                <tr>
+                                    <td>{{ student.name }}</td>
+                                    <td>{{ student.character.get('level', 1) }}</td>
+                                    <td>{{ student.character.get('xp', 0) }}</td>
+                                    <td>
+                                        <select class="form-select reward-select" data-student-id="{{ student_id }}">
+                                            <option value="">Select Reward...</option>
+                                            {% for reward_id, reward in rewards.items() %}
+                                            <option value="{{ reward_id }}">{{ reward.name }} (+{{ reward.cost }} XP)</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class="form-select consequence-select" data-student-id="{{ student_id }}">
+                                            <option value="">Select Consequence...</option>
+                                            {% for consequence_id, consequence in consequences.items() %}
+                                            <option value="{{ consequence_id }}">{{ consequence.name }} (-{{ consequence.penalty }} XP)</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-sm btn-success apply-reward" data-student-id="{{ student_id }}">
+                                            <i class="fas fa-check"></i>
+                                        </button>
+                                        <button class="btn btn-sm btn-danger apply-consequence" data-student-id="{{ student_id }}">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Rewards Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-success text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-crown me-2"></i>Rewards
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('view_create_reward') }}" class="btn btn-success mb-3">
+                        <i class="fas fa-plus me-2"></i>Add New Reward
+                    </a>
+                    <div class="list-group">
+                        {% for reward_id, reward in rewards.items() %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">{{ reward.name }}</h5>
+                                    <p class="mb-1">{{ reward.description }}</p>
+                                    <small class="text-muted">Reward: +{{ reward.cost }} XP</small>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-danger delete-reward" 
+                                            data-reward-id="{{ reward_id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="text-center text-muted">No rewards created yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Consequences Section -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-skull me-2"></i>Consequences
+                    </h3>
+                </div>
+                <div class="card-body">
+                    <a href="{{ url_for('view_create_consequence') }}" class="btn btn-danger mb-3">
+                        <i class="fas fa-plus me-2"></i>Add New Consequence
+                    </a>
+                    <div class="list-group">
+                        {% for consequence_id, consequence in consequences.items() %}
+                        <div class="list-group-item">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h5 class="mb-1">{{ consequence.name }}</h5>
+                                    <p class="mb-1">{{ consequence.description }}</p>
+                                    <small class="text-muted">Penalty: -{{ consequence.penalty }} XP</small>
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-danger delete-consequence" 
+                                            data-consequence-id="{{ consequence_id }}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {% else %}
+                        <p class="text-center text-muted">No consequences created yet.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-bottom: none;
+}
+
+.list-group-item {
+    border-left: none;
+    border-right: none;
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.btn {
+    border-radius: 20px;
+    padding: 8px 16px;
+}
+
+.modal-content {
+    border-radius: 15px;
+    border: none;
+}
+
+.modal-header {
+    border-bottom: none;
+}
+
+.modal-footer {
+    border-top: none;
+}
+
+.table th {
+    border-top: none;
+}
+
+.form-select {
+    border-radius: 20px;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle reward application
+    document.querySelectorAll('.apply-reward').forEach(button => {
+        button.addEventListener('click', function() {
+            const studentId = this.dataset.studentId;
+            const rewardSelect = document.querySelector(`.reward-select[data-student-id="${studentId}"]`);
+            const rewardId = rewardSelect.value;
+            
+            if (!rewardId) {
+                alert('Please select a reward first');
+                return;
+            }
+            
+            fetch('/api/rewards/assign', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    reward_id: rewardId,
+                    student_id: studentId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update XP display in real-time
+                    const xpCell = this.closest('tr').querySelector('td:nth-child(3)');
+                    const currentXP = parseInt(xpCell.textContent);
+                    const rewardXP = parseInt(rewardSelect.options[rewardSelect.selectedIndex].text.match(/\+(\d+)/)[1]);
+                    xpCell.textContent = currentXP + rewardXP;
+                    
+                    // Reset the select
+                    rewardSelect.value = '';
+                } else {
+                    alert('Error applying reward: ' + data.message);
+                }
+            });
+        });
+    });
+
+    // Handle consequence application
+    document.querySelectorAll('.apply-consequence').forEach(button => {
+        button.addEventListener('click', function() {
+            const studentId = this.dataset.studentId;
+            const consequenceSelect = document.querySelector(`.consequence-select[data-student-id="${studentId}"]`);
+            const consequenceId = consequenceSelect.value;
+            
+            if (!consequenceId) {
+                alert('Please select a consequence first');
+                return;
+            }
+            
+            fetch('/api/consequences/assign', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    consequence_id: consequenceId,
+                    student_id: studentId
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update XP display in real-time
+                    const xpCell = this.closest('tr').querySelector('td:nth-child(3)');
+                    const currentXP = parseInt(xpCell.textContent);
+                    const penaltyXP = parseInt(consequenceSelect.options[consequenceSelect.selectedIndex].text.match(/-(\d+)/)[1]);
+                    xpCell.textContent = Math.max(0, currentXP - penaltyXP);
+                    
+                    // Reset the select
+                    consequenceSelect.value = '';
+                } else {
+                    alert('Error applying consequence: ' + data.message);
+                }
+            });
+        });
+    });
+
+    // Handle deletions
+    document.querySelectorAll('.delete-reward').forEach(button => {
+        button.addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete this reward?')) {
+                const rewardId = this.dataset.rewardId;
+                fetch(`/api/rewards/${rewardId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting reward: ' + data.message);
+                    }
+                });
+            }
+        });
+    });
+
+    document.querySelectorAll('.delete-consequence').forEach(button => {
+        button.addEventListener('click', function() {
+            if (confirm('Are you sure you want to delete this consequence?')) {
+                const consequenceId = this.dataset.consequenceId;
+                fetch(`/api/consequences/${consequenceId}`, {
+                    method: 'DELETE'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert('Error deleting consequence: ' + data.message);
+                    }
+                });
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 
