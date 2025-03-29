@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Choose Your Class - Legends of Learning{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title text-center mb-4">Choose Your Class</h2>
+                <form method="POST" action="{{ url_for('character_class_selection') }}">
+                    <input type="hidden" name="gender" value="{{ gender }}">
+                    <div class="mb-4">
+                        <h4 class="mb-3">Select Your Character Class</h4>
+                        <div class="row g-3">
+                            <div class="col-md-4">
+                                <div class="card h-100 class-option" data-class="warrior">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-shield-alt fa-3x mb-3 text-primary"></i>
+                                        <h5 class="card-title">Warrior</h5>
+                                        <p class="card-text">A mighty warrior who excels in strength and defense.</p>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="character_class" 
+                                                   id="warrior" value="warrior" required>
+                                            <label class="form-check-label" for="warrior">
+                                                Select Warrior
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100 class-option" data-class="sorcerer">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-hat-wizard fa-3x mb-3 text-danger"></i>
+                                        <h5 class="card-title">Sorcerer</h5>
+                                        <p class="card-text">A powerful spellcaster who wields arcane magic.</p>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="character_class" 
+                                                   id="sorcerer" value="sorcerer">
+                                            <label class="form-check-label" for="sorcerer">
+                                                Select Sorcerer
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card h-100 class-option" data-class="druid">
+                                    <div class="card-body text-center">
+                                        <i class="fas fa-leaf fa-3x mb-3 text-success"></i>
+                                        <h5 class="card-title">Druid</h5>
+                                        <p class="card-text">A nature-loving spellcaster who commands the forces of nature.</p>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="character_class" 
+                                                   id="druid" value="druid">
+                                            <label class="form-check-label" for="druid">
+                                                Select Druid
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-lg">Next: Choose Character</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card {
+    transition: transform 0.2s;
+    cursor: pointer;
+}
+.card:hover {
+    transform: translateY(-5px);
+}
+.class-option.selected {
+    border: 2px solid #4CAF50;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Make class option cards clickable
+    document.querySelectorAll('.class-option').forEach(card => {
+        card.addEventListener('click', function() {
+            // Remove selected class from all cards
+            document.querySelectorAll('.class-option').forEach(c => {
+                c.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked card
+            this.classList.add('selected');
+            
+            // Check the radio button
+            const radio = this.querySelector('input[type="radio"]');
+            if (radio) {
+                radio.checked = true;
+            }
+        });
+    });
+});
+</script>
+{% endblock %} 

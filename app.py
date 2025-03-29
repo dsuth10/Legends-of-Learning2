@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash, jsonify, send_from_directory, session
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import json
@@ -110,12 +110,78 @@ def character_creation():
         return redirect(url_for('dashboard'))
     
     if request.method == 'POST':
+        gender = request.form.get('gender')
+        
+        if not gender:
+            flash('Please select a gender')
+            return redirect(url_for('character_creation'))
+        
+        # Store gender in session for next step
+        session['character_gender'] = gender
+        return redirect(url_for('character_class_selection'))
+    
+    return render_template('character_creation.html')
+
+@app.route('/character_class_selection', methods=['GET', 'POST'])
+@login_required
+def character_class_selection():
+    if current_user.user_type != 'student':
+        return redirect(url_for('dashboard'))
+    
+    characters = load_characters()
+    if current_user.username in characters:
+        return redirect(url_for('dashboard'))
+    
+    if 'character_gender' not in session:
+        return redirect(url_for('character_creation'))
+    
+    if request.method == 'POST':
         character_class = request.form.get('character_class')
         gender = request.form.get('gender')
         
+        # Debug logging
+        print(f"Form data received in class selection:")
+        print(f"character_class: {character_class}")
+        print(f"gender: {gender}")
+        print(f"All form data: {request.form}")
+        
         if not character_class or not gender:
-            flash('Please select both a class and gender')
-            return redirect(url_for('character_creation'))
+            flash('Please select a class')
+            return redirect(url_for('character_class_selection'))
+        
+        # Store class in session for next step
+        session['character_class'] = character_class
+        return redirect(url_for('character_image_selection'))
+    
+    return render_template('character_class_selection.html', gender=session['character_gender'])
+
+@app.route('/character_image_selection', methods=['GET', 'POST'])
+@login_required
+def character_image_selection():
+    if current_user.user_type != 'student':
+        return redirect(url_for('dashboard'))
+    
+    characters = load_characters()
+    if current_user.username in characters:
+        return redirect(url_for('dashboard'))
+    
+    if 'character_gender' not in session or 'character_class' not in session:
+        return redirect(url_for('character_creation'))
+    
+    if request.method == 'POST':
+        character_class = request.form.get('character_class')
+        gender = request.form.get('gender')
+        character_image = request.form.get('character_image')
+        
+        # Debug logging
+        print(f"Form data received:")
+        print(f"character_class: {character_class}")
+        print(f"gender: {gender}")
+        print(f"character_image: {character_image}")
+        
+        if not character_class or not gender or not character_image:
+            flash('Please select a character appearance')
+            return redirect(url_for('character_image_selection'))
         
         # Create character data
         characters[current_user.username] = {
@@ -123,14 +189,24 @@ def character_creation():
             'gender': gender,
             'level': 1,
             'xp': 0,
+            'image': f"{character_image}_{character_class}_{gender}_level1.png",
             'created_at': datetime.now().isoformat()
         }
         save_characters(characters)
         
+        # Debug logging
+        print(f"Saved character data: {characters[current_user.username]}")
+        
+        # Clear session data
+        session.pop('character_gender', None)
+        session.pop('character_class', None)
+        
         flash('Character created successfully!')
         return redirect(url_for('dashboard'))
     
-    return render_template('character_creation.html')
+    return render_template('character_image_selection.html', 
+                         gender=session['character_gender'],
+                         character_class=session['character_class'])
 
 @app.route('/create_account', methods=['GET', 'POST'])
 def create_account():
@@ -186,6 +262,7 @@ def dashboard():
                              next_level_xp=100,
                              character_class=character.get('class', ''),
                              gender=character.get('gender', ''),
+                             image=character.get('image', ''),
                              activities=[],
                              achievements=[])
 
@@ -245,9 +322,45 @@ def delete_class(class_id):
         flash('You do not have permission to delete this class')
         return redirect(url_for('dashboard'))
     
+    # Get list of students in this class
+    students_in_class = class_data['students']
+    
     # Remove class
     del classes[class_id]
     save_classes(classes)
+    
+    # Check if students are in any other class
+    all_students = set()
+    for c in classes.values():
+        all_students.update(c['students'])
+    
+    # Delete student accounts that are not in any other class
+    try:
+        with open('data/users.json', 'r') as f:
+            users = json.load(f)
+    except FileNotFoundError:
+        users = {}
+    
+    for username in students_in_class:
+        if username not in all_students and username in users:
+            del users[username]
+    
+    # Save updated users data
+    save_users(users)
+    
+    # Also delete character data for students not in any other class
+    try:
+        with open('data/characters.json', 'r') as f:
+            characters = json.load(f)
+    except FileNotFoundError:
+        characters = {}
+    
+    for username in students_in_class:
+        if username not in all_students and username in characters:
+            del characters[username]
+    
+    # Save updated characters data
+    save_characters(characters)
     
     flash('Class deleted successfully')
     return redirect(url_for('dashboard'))
