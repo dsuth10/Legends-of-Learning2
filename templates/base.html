@@ -50,14 +50,14 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container">
-            <a class="navbar-brand" href="{{ url_for('index') }}">
+            <a class="navbar-brand" href="{{ url_for('auth.index') }}">
                 <img src="{{ url_for('static', filename='images/legends_icon.png') }}" alt="Legends of Learning Icon">
                 Legends of Learning
             </a>
             {% if current_user.is_authenticated %}
             <div class="navbar-nav ms-auto">
                 <span class="nav-item nav-link">Welcome, {{ current_user.username }}</span>
-                <a class="nav-item nav-link" href="{{ url_for('logout') }}">Logout</a>
+                <a class="nav-item nav-link" href="{{ url_for('auth.logout') }}">Logout</a>
             </div>
             {% endif %}
         </div>

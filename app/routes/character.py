@@ -3,7 +3,7 @@ from flask_login import login_required, current_user
 from ..models.character import Character
 from ..utils.helpers import get_character_image_path
 
-character = Blueprint('character', __name__)
+character = Blueprint('character', __name__, template_folder='../../templates')
 
 @character.route('/character_creation', methods=['GET', 'POST'])
 @login_required

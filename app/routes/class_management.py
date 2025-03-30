@@ -5,8 +5,9 @@ import pandas as pd
 from ..models.class_model import Class
 from ..models.user import User
 from ..utils.helpers import process_student_csv
+from werkzeug.security import generate_password_hash
 
-class_management_bp = Blueprint('class_management', __name__)
+class_management_bp = Blueprint('class_management', __name__, template_folder='../../templates')
 
 @class_management_bp.route('/create_class', methods=['GET', 'POST'])
 @login_required
@@ -65,12 +66,15 @@ def class_details(class_code):
     
     # Get student information
     students = []
+    users = User.load_users()
     for username in class_obj.students:
-        student_info = {
-            'username': username,
-            'character': None  # We'll add character info later if needed
-        }
-        students.append(student_info)
+        if username in users:
+            student_info = {
+                'username': username,
+                'name': users[username].get('name', username),
+                'character': None  # We'll add character info later if needed
+            }
+            students.append(student_info)
     
     return render_template('class_details.html',
                          class_name=class_obj.name,
@@ -118,4 +122,63 @@ def download_template():
     # Send file and clean up
     response = send_file(template_path, as_attachment=True)
     response.call_on_close(lambda: os.remove(template_path))
-    return response 
+    return response
+
+@class_management_bp.route('/class/<class_code>/student/<username>/edit', methods=['POST'])
+@login_required
+def edit_student(class_code, username):
+    if current_user.user_type != 'teacher':
+        return redirect(url_for('dashboard.student_dashboard'))
+    
+    class_obj = Class.get(class_code)
+    if not class_obj or class_obj.teacher != current_user.username:
+        flash('Class not found')
+        return redirect(url_for('dashboard.teacher_dashboard'))
+    
+    if username not in class_obj.students:
+        flash('Student not found')
+        return redirect(url_for('class_management.class_details', class_code=class_code))
+    
+    # Get form data
+    name = request.form.get('name')
+    password = request.form.get('password')
+    
+    # Update user data
+    users = User.load_users()
+    if username in users:
+        users[username]['name'] = name
+        if password:  # Only update password if provided
+            users[username]['password_hash'] = generate_password_hash(password)
+        User.save_users(users)
+        flash('Student updated successfully')
+    else:
+        flash('Student not found')
+    
+    return redirect(url_for('class_management.class_details', class_code=class_code))
+
+@class_management_bp.route('/class/<class_code>/student/<username>/delete', methods=['POST'])
+@login_required
+def delete_student(class_code, username):
+    if current_user.user_type != 'teacher':
+        return redirect(url_for('dashboard.student_dashboard'))
+    
+    class_obj = Class.get(class_code)
+    if not class_obj or class_obj.teacher != current_user.username:
+        flash('Class not found')
+        return redirect(url_for('dashboard.teacher_dashboard'))
+    
+    if username not in class_obj.students:
+        flash('Student not found')
+        return redirect(url_for('class_management.class_details', class_code=class_code))
+    
+    # Remove student from class
+    class_obj.remove_student(username)
+    
+    # Delete user account
+    users = User.load_users()
+    if username in users:
+        del users[username]
+        User.save_users(users)
+    
+    flash('Student deleted successfully')
+    return redirect(url_for('class_management.class_details', class_code=class_code)) 

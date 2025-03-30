@@ -5,7 +5,7 @@ from ..models.user import User
 import json
 import os
 
-auth = Blueprint('auth', __name__)
+auth = Blueprint('auth', __name__, template_folder='../../templates')
 
 @auth.route('/')
 def index():

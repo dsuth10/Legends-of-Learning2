@@ -1,9 +1,11 @@
-from flask import Blueprint, render_template, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
 from flask_login import login_required, current_user
 from ..models.class_model import Class
 from ..models.character import Character
+from ..models.user import User
+import json
 
-dashboard_bp = Blueprint('dashboard', __name__)
+dashboard_bp = Blueprint('dashboard', __name__, template_folder='../../templates')
 
 @dashboard_bp.route('/dashboard')
 @login_required

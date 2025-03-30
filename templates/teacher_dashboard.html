@@ -21,7 +21,7 @@
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-hover">
+                <table class="table">
                     <thead>
                         <tr>
                             <th>Class Name</th>
@@ -38,7 +38,7 @@
                             <td>{{ class_data.created_at.split('T')[0] }}</td>
                             <td>
                                 <div class="btn-group">
-                                    <a href="{{ url_for('class_details', class_code=class_id) }}" class="btn btn-sm btn-info">
+                                    <a href="{{ url_for('class_management.class_details', class_code=class_id) }}" class="btn btn-sm btn-info">
                                         <i class="fas fa-info-circle"></i> Details
                                     </a>
                                     <button type="button" class="btn btn-sm btn-danger" 
@@ -64,17 +64,17 @@
                 <h5 class="modal-title">Create New Class</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form action="{{ url_for('create_class') }}" method="POST" enctype="multipart/form-data">
+            <form action="{{ url_for('class_management.create_class') }}" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Class Name</label>
                         <input type="text" class="form-control" name="class_name" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Student CSV File</label>
-                        <input type="file" class="form-control" name="student_csv" accept=".csv" required>
+                        <label class="form-label">Student CSV File (Optional)</label>
+                        <input type="file" class="form-control" name="student_csv" accept=".csv">
                         <div class="form-text">
-                            <a href="{{ url_for('static', filename='samples/student_template.csv') }}" download>
+                            <a href="{{ url_for('class_management.download_template') }}">
                                 <i class="fas fa-download"></i> Download Template
                             </a>
                         </div>
@@ -103,9 +103,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                <form action="{{ url_for('delete_class', class_id=class_id) }}" method="POST" style="display: inline;">
-                    <button type="submit" class="btn btn-danger">Delete</button>
-                </form>
+                <a href="{{ url_for('class_management.delete_class', class_code=class_id) }}" class="btn btn-danger">Delete</a>
             </div>
         </div>
     </div>

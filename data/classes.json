@@ -1,12 +1,12 @@
 {
-    "test1": {
-        "name": "test1",
-        "teacher": "doug",
+    "test2": {
+        "name": "test2",
+        "teacher": "kyahgirl",
         "students": [
             "student1",
             "student2",
             "student3"
         ],
-        "created_at": "2025-03-29T21:08:00.230989"
+        "created_at": "2025-03-30T14:44:56.806156"
     }
 }
