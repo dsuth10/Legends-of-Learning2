@@ -90,10 +90,13 @@ class User(UserMixin):
 ### Character Model (app/models/character.py)
 ```python
 class Character:
-    def __init__(self, username, character_class, gender, image_number, level=1, xp=0)
+    def __init__(self, username, character_class, gender, image_number=1, level=1, xp=0, health=100, power=50, gold=0)
     def get(username)
     def save()
     def add_xp(amount)
+    def add_health(amount)
+    def add_power(amount)
+    def add_gold(amount)
 ```
 
 ### Class Model (app/models/class_model.py)
@@ -371,4 +374,18 @@ class Class:
 4. Set up proper logging
 5. Use environment variables for sensitive data
 6. Configure proper error handling
-7. Set up backup system for JSON data files 
+7. Set up backup system for JSON data files
+
+### Character Image Structure
+Character images are stored in the following directory structure:
+```
+static/images/characters/
+├── {character_class}/           # warrior, sorcerer, or druid
+│   ├── {gender}/               # male or female
+│   │   ├── level{level}/       # level1, level2, or level3
+│   │   │   ├── {image_number}_{character_class}_{gender}_level{level}.png
+```
+
+Image naming convention:
+- Format: `{image_number}_{character_class}_{gender}_level{level}.png`
+- Example: `1_warrior_male_level1.png` 
