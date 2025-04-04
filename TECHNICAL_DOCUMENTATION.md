@@ -175,6 +175,9 @@ class Class:
         "image_number": 1,
         "level": 1,
         "xp": 0,
+        "health": 100,
+        "power": 50,
+        "gold": 0,
         "created_at": "ISO timestamp"
     }
 }
@@ -186,8 +189,10 @@ class Class:
     "reward_id": {
         "name": "Reward Name",
         "description": "Reward Description",
-        "xp_value": 100,
-        "created_by": "teacher_username",
+        "xp": 100,
+        "health": 10,
+        "power": 5,
+        "gold": 50,
         "class_id": "class_identifier",
         "created_at": "ISO timestamp"
     }
@@ -200,13 +205,37 @@ class Class:
     "consequence_id": {
         "name": "Consequence Name",
         "description": "Consequence Description",
-        "xp_penalty": 50,
-        "created_by": "teacher_username",
+        "xp": -50,
+        "health": -10,
+        "power": -5,
+        "gold": -25,
         "class_id": "class_identifier",
         "created_at": "ISO timestamp"
     }
 }
 ```
+
+## Field Requirements
+
+### Rewards
+- **Required Fields**:
+  - `name`: Name of the reward
+- **Optional Fields**:
+  - `description`: Description of the reward
+  - `xp`: Experience points awarded (default: 0)
+  - `health`: Health points awarded (default: 0)
+  - `power`: Power points awarded (default: 0)
+  - `gold`: Gold coins awarded (default: 0)
+
+### Consequences
+- **Required Fields**:
+  - `name`: Name of the consequence
+- **Optional Fields**:
+  - `description`: Description of the consequence
+  - `xp`: Experience points penalty (default: 0)
+  - `health`: Health points penalty (default: 0)
+  - `power`: Power points penalty (default: 0)
+  - `gold`: Gold coins penalty (default: 0)
 
 ## Template Variables
 
@@ -324,6 +353,16 @@ class Class:
    - Always use try/except when reading/writing JSON files
    - Verify file permissions on data directory
    - Keep backup of data files during development
+
+5. Character Display in Class Dashboard
+   - Ensure the Character model is imported in class_management.py
+   - Use Character.get(username) to load character information for each student
+   - Verify that characters.json contains the correct data for each student
+
+6. Password Reset
+   - Use werkzeug.security.generate_password_hash() to create new password hashes
+   - Update the password field in users.json with the new hash
+   - Ensure the hash is generated using the same method as the application
 
 ## Deployment Considerations
 1. Change default teacher registration code

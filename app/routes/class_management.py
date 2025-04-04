@@ -4,6 +4,7 @@ import os
 import pandas as pd
 from ..models.class_model import Class
 from ..models.user import User
+from ..models.character import Character
 from ..utils.helpers import process_student_csv
 from werkzeug.security import generate_password_hash
 
@@ -72,7 +73,7 @@ def class_details(class_code):
             student_info = {
                 'username': username,
                 'name': users[username].get('name', username),
-                'character': None  # We'll add character info later if needed
+                'character': Character.get(username)  # Load character information
             }
             students.append(student_info)
     

@@ -1,25 +1,21 @@
 {
-    "doug": {
-        "password": "scrypt:32768:8:1$G2pww7cshZQ8L6g4$c8fd6aad41d2092111573fde3a1c94e144a96d3966113226db6dfa09fbe74336336e8d2b796da118f5792d20e365a008df8501e2daa10db8267d22520c352071",
-        "user_type": "teacher"
-    },
-    "kyahgirl": {
-        "password": "scrypt:32768:8:1$gZoO68RIjVBnIWS8$de00c20eec0164720eb98955f3f946eae4582a325e302a95ff04e8a9a0ead4f3d2c7d68eb2cb4c8451f73eac9c5a6f95121c677007ee571cd13070d4b9c175f1",
+    "jd": {
+        "password": "scrypt:32768:8:1$oaXqLzGlh0474geM$119fb31021817be64b9c474cb6932a8061205ddf480ea37077dbc3f3954b4555a4ce0a63fd12fcc8483753fd2493298db414ce0a8d078d5c1c8b27cfe4718cfc",
         "user_type": "teacher",
-        "name": "kyahgirl"
+        "name": "jd"
     },
     "student1": {
-        "password": "scrypt:32768:8:1$e3nqpe5Pxbeo6zKQ$b5ef7d947a943cd1b84948606d59afb14e943cbb2d65fc31bb46fa5fecc16b4285a1605ad7a3f352d2ee3e1aeb7893e81a8ab1288be3e85a5c34545a325eabb8",
+        "password": "scrypt:32768:8:1$jRIFOFolNohqoCNq$7c2cf79409768d9fdf4929a6942d6adcaf5387a83231fa4d079503277c036ce3b15ed937ea1da90674a5447fa295c66dff505e068b5192300e1028993181f021",
         "user_type": "student",
         "name": "student1"
     },
     "student2": {
-        "password": "scrypt:32768:8:1$KdX4c6QWMptwmfZa$ffa66993d326aa9f2121b032897c02b3a68d40b9c7aeac34075f037ed9b35f445332b0abb9bb88160eb31ecae630292445ae79192508186b741cc3d263767604",
+        "password": "scrypt:32768:8:1$yBG1b09qBlfu8yPm$2e56e54f243a62acc6ff0be501863bb04d048d00e77f1ae4ed2933a0859e5e254c54d2673d6350f4ae9920db7e07ad5872993827a7059fb48e53de4cfcd872fe",
         "user_type": "student",
         "name": "student2"
     },
     "student3": {
-        "password": "scrypt:32768:8:1$FXMmsTuZHYHH8ujI$046f82a0254c82e4475e403e5f241586f305056cc1dc4a09d2856c628c6d0796abaef3a1df62d1dcb040957fc1bb670978c0172b759953616de391cf77da6f3f",
+        "password": "scrypt:32768:8:1$XkewOnSIFZYPkLoT$90a7071406977e411367ccea553e396794133a03958428cf9943e79f2339f2f2d929d9b1540f5d68e98f5266eb257a1ee6461f3a4edc90967272894c8dc2427a",
         "user_type": "student",
         "name": "student3"
     }
