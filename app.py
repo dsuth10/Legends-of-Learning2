@@ -117,7 +117,39 @@ def index():
 
 @app.route('/static/images/<path:filename>')
 def serve_static(filename):
-    return send_from_directory('static/images', filename)
+    # Split the filename into directory and file parts
+    parts = filename.split('/')
+    if len(parts) > 1:
+        # If there are subdirectories, join all but the last part for the directory
+        directory = '/'.join(parts[:-1])
+        file = parts[-1]
+        return send_from_directory(f'static/images/{directory}', file)
+    else:
+        # If no subdirectories, use the original behavior
+        return send_from_directory('static/images', filename)
+
+@app.route('/master-dashboard')
+def master_dashboard():
+    # Load all necessary data
+    users = User.load_all()
+    classes = load_classes()
+    
+    # Organize data for display
+    teachers = [user for user in users.values() if user.get('role') == 'teacher']
+    students = [user for user in users.values() if user.get('role') == 'student']
+    
+    # Add class information to teachers and students
+    for teacher in teachers:
+        teacher['classes'] = [c for c in classes.values() if c.get('teacher') == teacher['username']]
+    
+    for student in students:
+        student_class = next((c for c in classes.values() if student['username'] in c.get('students', [])), None)
+        student['class_name'] = student_class['name'] if student_class else 'No Class'
+    
+    return render_template('master_dashboard.html', 
+                         teachers=teachers,
+                         classes=list(classes.values()),
+                         students=students)
 
 if __name__ == '__main__':
     app.run(debug=True) 

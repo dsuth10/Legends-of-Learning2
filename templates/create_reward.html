@@ -13,7 +13,7 @@
                     </h3>
                 </div>
                 <div class="card-body">
-                    <form action="{{ url_for('codex.create_reward') }}" method="POST">
+                    <form id="createRewardForm">
                         <div class="mb-3">
                             <label for="name" class="form-label">Reward Name</label>
                             <input type="text" class="form-control" id="name" name="name" required>
@@ -23,8 +23,8 @@
                             <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="cost" class="form-label">XP Cost</label>
-                            <input type="number" class="form-control" id="cost" name="cost" min="0" required>
+                            <label for="xp" class="form-label">XP Cost</label>
+                            <input type="number" class="form-control" id="xp" name="xp" min="0" required>
                         </div>
                         <div class="mb-3">
                             <label for="health" class="form-label">Health Bonus</label>
@@ -52,4 +52,39 @@
         </div>
     </div>
 </div>
+
+<script>
+document.getElementById('createRewardForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = {
+        name: document.getElementById('name').value,
+        description: document.getElementById('description').value,
+        xp: parseInt(document.getElementById('xp').value) || 0,
+        health: parseInt(document.getElementById('health').value) || 0,
+        power: parseInt(document.getElementById('power').value) || 0,
+        gold: parseInt(document.getElementById('gold').value) || 0
+    };
+    
+    fetch('/codex/api/rewards/create', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = "{{ url_for('codex.view_codex_of_conduct') }}";
+        } else {
+            alert('Error creating reward: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error creating reward. Please try again.');
+    });
+});
+</script>
 {% endblock %} 

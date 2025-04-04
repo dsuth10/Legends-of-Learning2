@@ -25,7 +25,7 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th>Username</th>
+                            <th>Student</th>
                             <th>Character</th>
                             <th>Level</th>
                             <th>XP</th>
@@ -35,12 +35,25 @@
                     <tbody>
                         {% for student in students %}
                         <tr>
-                            <td>{{ student.username }}</td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    {% if student.character %}
+                                        <img src="{{ url_for('static', filename='images/characters/' + student.character.character_class + '/' + student.character.gender + '/level1/' + student.character.image_number|string + '_' + student.character.character_class + '_' + student.character.gender + '_level1.png') }}" 
+                                             alt="{{ student.character.character_class|title }}" 
+                                             class="character-thumbnail me-2">
+                                    {% else %}
+                                        <div class="character-thumbnail-placeholder me-2">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                    {% endif %}
+                                    <span>{{ student.username }}</span>
+                                </div>
+                            </td>
                             <td>
                                 {% if student.character %}
-                                    <span class="badge {% if student.character.class == 'warrior' %}bg-primary{% elif student.character.class == 'sorcerer' %}bg-danger{% else %}bg-success{% endif %}">
-                                        <i class="fas {% if student.character.class == 'warrior' %}fa-shield-alt{% elif student.character.class == 'sorcerer' %}fa-hat-wizard{% else %}fa-leaf{% endif %}"></i>
-                                        {{ student.character.class|title }}
+                                    <span class="badge {% if student.character.character_class == 'warrior' %}bg-primary{% elif student.character.character_class == 'sorcerer' %}bg-danger{% else %}bg-success{% endif %}">
+                                        <i class="fas {% if student.character.character_class == 'warrior' %}fa-shield-alt{% elif student.character.character_class == 'sorcerer' %}fa-hat-wizard{% else %}fa-leaf{% endif %}"></i>
+                                        {{ student.character.character_class|title }}
                                     </span>
                                     <i class="fas {% if student.character.gender == 'male' %}fa-mars text-primary{% else %}fa-venus text-danger{% endif %}"></i>
                                 {% else %}
@@ -159,6 +172,25 @@
 .badge {
     font-size: 0.875rem;
     padding: 0.5em 0.75em;
+}
+.character-thumbnail {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+}
+.character-thumbnail-placeholder {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 50%;
+    color: #6c757d;
 }
 </style>
 {% endblock %} 

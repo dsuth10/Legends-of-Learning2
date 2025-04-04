@@ -1,21 +1,21 @@
 {
     "jd": {
-        "password": "scrypt:32768:8:1$oaXqLzGlh0474geM$119fb31021817be64b9c474cb6932a8061205ddf480ea37077dbc3f3954b4555a4ce0a63fd12fcc8483753fd2493298db414ce0a8d078d5c1c8b27cfe4718cfc",
+        "password": "scrypt:32768:8:1$ldmKpQDXjdXPPEbx$509a617a1b324adf14d9afdb4df3cec1a6cdcd7347af2db22d4fe08ea01d8c44e3523f8824ac60225c50ca057e78325dcc61025da2a2bbae2de7c1f8fbebb3ed",
         "user_type": "teacher",
         "name": "jd"
     },
     "student1": {
-        "password": "scrypt:32768:8:1$jRIFOFolNohqoCNq$7c2cf79409768d9fdf4929a6942d6adcaf5387a83231fa4d079503277c036ce3b15ed937ea1da90674a5447fa295c66dff505e068b5192300e1028993181f021",
+        "password": "scrypt:32768:8:1$e8g1caxZ1ucWKkf0$a5e55fc27618fd3bfaf7f12cb6978027a96233be58fe29d2e9087e3e0d44b80c137bc28f2d1a5ed8fd01a51260ed49f5caf31a2f7157e1c2a9e4c34a007b905b",
         "user_type": "student",
         "name": "student1"
     },
     "student2": {
-        "password": "scrypt:32768:8:1$yBG1b09qBlfu8yPm$2e56e54f243a62acc6ff0be501863bb04d048d00e77f1ae4ed2933a0859e5e254c54d2673d6350f4ae9920db7e07ad5872993827a7059fb48e53de4cfcd872fe",
+        "password": "scrypt:32768:8:1$2H5X5TX2jGTMSYt4$5adc7f30971ba0cc102263cabdce04efac522fb7fe10d0f64afe1664b8751fd10de032d1b8f17625d6240597e4ccdc377c10b1e1b61daa5edd80cf49de2d6a9b",
         "user_type": "student",
         "name": "student2"
     },
     "student3": {
-        "password": "scrypt:32768:8:1$XkewOnSIFZYPkLoT$90a7071406977e411367ccea553e396794133a03958428cf9943e79f2339f2f2d929d9b1540f5d68e98f5266eb257a1ee6461f3a4edc90967272894c8dc2427a",
+        "password": "scrypt:32768:8:1$HgmFuI04GfoSzocd$43a18b89502514c4c2893df1460de00453c9c4be51637d4c84dfd2b95fd753a7bf7521f792c500dfeae7658f08c2d5d0a95be118e6f2fbe7493740dab3bafece",
         "user_type": "student",
         "name": "student3"
     }
