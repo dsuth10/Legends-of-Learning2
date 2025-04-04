@@ -1,40 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Create Reward - Legends of Learning{% endblock %}
+{% block title %}Create New Reward - Legends of Learning{% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="row mb-4">
-        <div class="col">
-            <h2>Create New Reward</h2>
-        </div>
-        <div class="col-auto">
-            <a href="{{ url_for('view_codex_of_conduct') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Back to Codex of Conduct
-            </a>
-        </div>
-    </div>
-
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
+                <div class="card-header bg-success text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-crown me-2"></i>Create New Reward
+                    </h3>
+                </div>
                 <div class="card-body">
-                    <form id="addRewardForm">
+                    <form action="{{ url_for('codex.create_reward') }}" method="POST">
                         <div class="mb-3">
-                            <label for="rewardName" class="form-label">Reward Name</label>
-                            <input type="text" class="form-control" id="rewardName" required>
+                            <label for="name" class="form-label">Reward Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="mb-3">
-                            <label for="rewardDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="rewardDescription" rows="3" required></textarea>
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="rewardCost" class="form-label">XP Reward</label>
-                            <input type="number" class="form-control" id="rewardCost" min="0" required>
+                            <label for="cost" class="form-label">XP Cost</label>
+                            <input type="number" class="form-control" id="cost" name="cost" min="0" required>
                         </div>
-                        <div class="d-grid">
+                        <div class="mb-3">
+                            <label for="health" class="form-label">Health Bonus</label>
+                            <input type="number" class="form-control" id="health" name="health" min="0" max="100" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="power" class="form-label">Power Bonus</label>
+                            <input type="number" class="form-control" id="power" name="power" min="0" max="100" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="gold" class="form-label">Gold Bonus</label>
+                            <input type="number" class="form-control" id="gold" name="gold" min="0" value="0">
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('codex.view_codex_of_conduct') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Codex
+                            </a>
                             <button type="submit" class="btn btn-success">
-                                <i class="fas fa-plus me-2"></i>Create Reward
+                                <i class="fas fa-save me-2"></i>Create Reward
                             </button>
                         </div>
                     </form>
@@ -43,42 +52,4 @@
         </div>
     </div>
 </div>
-
-<style>
-.card {
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn {
-    border-radius: 20px;
-    padding: 8px 16px;
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('addRewardForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData();
-        formData.append('name', document.getElementById('rewardName').value);
-        formData.append('description', document.getElementById('rewardDescription').value);
-        formData.append('cost', document.getElementById('rewardCost').value);
-        
-        fetch('/api/rewards', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = "{{ url_for('view_codex_of_conduct') }}";
-            } else {
-                alert('Error creating reward: ' + data.message);
-            }
-        });
-    });
-});
-</script>
 {% endblock %} 

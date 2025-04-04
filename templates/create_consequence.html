@@ -1,40 +1,49 @@
 {% extends "base.html" %}
 
-{% block title %}Create Consequence - Legends of Learning{% endblock %}
+{% block title %}Create New Consequence - Legends of Learning{% endblock %}
 
 {% block content %}
 <div class="container">
-    <div class="row mb-4">
-        <div class="col">
-            <h2>Create New Consequence</h2>
-        </div>
-        <div class="col-auto">
-            <a href="{{ url_for('view_codex_of_conduct') }}" class="btn btn-secondary">
-                <i class="fas fa-arrow-left me-2"></i>Back to Codex of Conduct
-            </a>
-        </div>
-    </div>
-
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h3 class="card-title mb-0">
+                        <i class="fas fa-skull me-2"></i>Create New Consequence
+                    </h3>
+                </div>
                 <div class="card-body">
-                    <form id="addConsequenceForm">
+                    <form action="{{ url_for('codex.create_consequence') }}" method="POST">
                         <div class="mb-3">
-                            <label for="consequenceName" class="form-label">Consequence Name</label>
-                            <input type="text" class="form-control" id="consequenceName" required>
+                            <label for="name" class="form-label">Consequence Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
                         </div>
                         <div class="mb-3">
-                            <label for="consequenceDescription" class="form-label">Description</label>
-                            <textarea class="form-control" id="consequenceDescription" rows="3" required></textarea>
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
                         </div>
                         <div class="mb-3">
-                            <label for="consequencePenalty" class="form-label">XP Penalty</label>
-                            <input type="number" class="form-control" id="consequencePenalty" min="0" required>
+                            <label for="penalty" class="form-label">XP Penalty</label>
+                            <input type="number" class="form-control" id="penalty" name="penalty" min="0" required>
                         </div>
-                        <div class="d-grid">
+                        <div class="mb-3">
+                            <label for="health" class="form-label">Health Penalty</label>
+                            <input type="number" class="form-control" id="health" name="health" max="0" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="power" class="form-label">Power Penalty</label>
+                            <input type="number" class="form-control" id="power" name="power" max="0" value="0">
+                        </div>
+                        <div class="mb-3">
+                            <label for="gold" class="form-label">Gold Penalty</label>
+                            <input type="number" class="form-control" id="gold" name="gold" max="0" value="0">
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ url_for('codex.view_codex_of_conduct') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left me-2"></i>Back to Codex
+                            </a>
                             <button type="submit" class="btn btn-danger">
-                                <i class="fas fa-plus me-2"></i>Create Consequence
+                                <i class="fas fa-save me-2"></i>Create Consequence
                             </button>
                         </div>
                     </form>
@@ -43,42 +52,4 @@
         </div>
     </div>
 </div>
-
-<style>
-.card {
-    border: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.btn {
-    border-radius: 20px;
-    padding: 8px 16px;
-}
-</style>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    document.getElementById('addConsequenceForm').addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const formData = new FormData();
-        formData.append('name', document.getElementById('consequenceName').value);
-        formData.append('description', document.getElementById('consequenceDescription').value);
-        formData.append('penalty', document.getElementById('consequencePenalty').value);
-        
-        fetch('/api/consequences', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                window.location.href = "{{ url_for('view_codex_of_conduct') }}";
-            } else {
-                alert('Error creating consequence: ' + data.message);
-            }
-        });
-    });
-});
-</script>
 {% endblock %} 

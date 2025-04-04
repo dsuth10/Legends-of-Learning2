@@ -3,4 +3,4 @@ description:
 globs: 
 alwaysApply: true
 ---
-[TECHNICAL_DOCUMENTATION.md](mdc:TECHNICAL_DOCUMENTATION.md)
+Always follow the [TECHNICAL_DOCUMENTATION.md](mdc:TECHNICAL_DOCUMENTATION.md)

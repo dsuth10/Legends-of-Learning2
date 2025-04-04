@@ -49,4 +49,7 @@ def student_dashboard():
                          xp=character.xp,
                          next_level_xp=next_level_xp,
                          progress=progress,
+                         health=character.health,
+                         power=character.power,
+                         gold=character.gold,
                          image=f"{character.image_number}_{character.character_class}_{character.gender}_level1.png") 
