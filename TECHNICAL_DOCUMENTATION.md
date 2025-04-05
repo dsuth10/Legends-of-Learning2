@@ -39,6 +39,7 @@
 ```
 Legends of Learning/
 ├── run.py                    # Application entry point
+├── update_levels.py          # Script to update character levels based on new progression system
 ├── app/                      # Main application package
 │   ├── __init__.py          # Application factory
 │   ├── models/              # Data models
@@ -73,7 +74,8 @@ Legends of Learning/
     ├── classes.json       # Class information
     ├── characters.json    # Student character data
     ├── rewards.json       # Reward system data
-    └── consequences.json  # Consequence system data
+    ├── consequences.json  # Consequence system data
+    └── level_progression.json  # Level progression system data
 ```
 
 ## Data Models
@@ -97,6 +99,9 @@ class Character:
     def add_health(amount)
     def add_power(amount)
     def add_gold(amount)
+    def load_level_progression()
+    def get_next_level_xp()
+    def check_level_up()
 ```
 
 ### Class Model (app/models/class_model.py)
@@ -214,6 +219,37 @@ class Class:
         "gold": -25,
         "class_id": "class_identifier",
         "created_at": "ISO timestamp"
+    }
+}
+```
+
+### Level Progression Data (level_progression.json)
+```json
+{
+    "level_requirements": {
+        "1": 0,
+        "2": 1000,
+        "3": 2000,
+        "4": 3000,
+        "5": 4000
+    },
+    "level_benefits": {
+        "2": {
+            "health_bonus": 20,
+            "power_bonus": 10
+        },
+        "3": {
+            "health_bonus": 40,
+            "power_bonus": 20
+        },
+        "4": {
+            "health_bonus": 60,
+            "power_bonus": 30
+        },
+        "5": {
+            "health_bonus": 80,
+            "power_bonus": 40
+        }
     }
 }
 ```
@@ -366,6 +402,13 @@ class Class:
    - Use werkzeug.security.generate_password_hash() to create new password hashes
    - Update the password field in users.json with the new hash
    - Ensure the hash is generated using the same method as the application
+
+7. Level Progression System
+   - The level progression system is defined in data/level_progression.json
+   - XP requirements and level benefits are configured in this file
+   - When updating the level progression system, run update_levels.py to update existing characters
+   - Templates should use Character.get_next_level_xp() to display correct XP requirements
+   - The Character model's check_level_up() method handles automatic level-ups when XP thresholds are met
 
 ## Deployment Considerations
 1. Change default teacher registration code
