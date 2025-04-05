@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file
+from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file, jsonify
 from flask_login import login_required, current_user
 import os
 import pandas as pd
@@ -182,4 +182,46 @@ def delete_student(class_code, username):
         User.save_users(users)
     
     flash('Student deleted successfully')
-    return redirect(url_for('class_management.class_details', class_code=class_code)) 
+    return redirect(url_for('class_management.class_details', class_code=class_code))
+
+@class_management_bp.route('/api/class/<class_code>/students')
+@login_required
+def get_class_students(class_code):
+    if current_user.user_type != 'teacher':
+        return jsonify({'success': False, 'message': 'Unauthorized'})
+    
+    class_obj = Class.get(class_code)
+    if not class_obj or class_obj.teacher != current_user.username:
+        return jsonify({'success': False, 'message': 'Class not found'})
+    
+    # Get student information
+    students = []
+    users = User.load_users()
+    for username in class_obj.students:
+        if username in users:
+            character = Character.get(username)
+            character_data = None
+            if character:
+                # Calculate next level XP on the server side
+                next_level_xp = character.get_next_level_xp()
+                
+                character_data = {
+                    'character_class': character.character_class,
+                    'gender': character.gender,
+                    'image_number': character.image_number,
+                    'level': character.level,
+                    'xp': character.xp,
+                    'next_level_xp': next_level_xp
+                }
+            
+            student_info = {
+                'username': username,
+                'name': users[username].get('name', username),
+                'character': character_data
+            }
+            students.append(student_info)
+    
+    return jsonify({
+        'success': True,
+        'students': students
+    }) 

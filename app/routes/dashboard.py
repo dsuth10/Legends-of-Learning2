@@ -3,6 +3,7 @@ from flask_login import login_required, current_user
 from ..models.class_model import Class
 from ..models.character import Character
 from ..models.user import User
+from ..routes.codex import load_rewards, load_consequences
 import json
 
 dashboard_bp = Blueprint('dashboard', __name__, template_folder='../../templates')
@@ -26,7 +27,22 @@ def teacher_dashboard():
         for class_id, class_data in classes.items() 
         if class_data['teacher'] == current_user.username
     }
-    return render_template('teacher_dashboard.html', classes=teacher_classes)
+    
+    # Load rewards and consequences for the teacher's class
+    rewards = {}
+    consequences = {}
+    if teacher_classes:
+        # Get the first class's rewards and consequences
+        class_id = next(iter(teacher_classes.keys()))
+        all_rewards = load_rewards()
+        all_consequences = load_consequences()
+        rewards = {k: v for k, v in all_rewards.items() if v.get('class_id') == class_id}
+        consequences = {k: v for k, v in all_consequences.items() if v.get('class_id') == class_id}
+    
+    return render_template('teacher_dashboard.html', 
+                         classes=teacher_classes,
+                         rewards=rewards,
+                         consequences=consequences)
 
 @dashboard_bp.route('/student_dashboard')
 @login_required

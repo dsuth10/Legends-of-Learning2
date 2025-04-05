@@ -2,70 +2,207 @@
 
 {% block title %}Teacher Dashboard - Legends of Learning{% endblock %}
 
+{% block container_class %}dashboard-container{% endblock %}
+
 {% block content %}
-<div class="container">
-    <div class="row mb-4">
-        <div class="col-12">
-            <div class="card bg-dark text-light">
-                <div class="card-body">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div class="text-center flex-grow-1">
-                            <h1 class="display-4 mb-3">Teacher Dashboard</h1>
-                            <p class="lead">Manage your classroom realms and guide your students' learning journey</p>
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card bg-dark text-light">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="text-center flex-grow-1">
+                        <h1 class="display-4 mb-3">Teacher Dashboard</h1>
+                        <p class="lead">Manage your classroom realms and guide your students' learning journey</p>
+                    </div>
+                    <div class="col-auto">
+                        <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light">
+                            <i class="fas fa-sign-out-alt me-2"></i>Logout
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Classes Section -->
+    <div class="col-md-3">
+        <div class="dashboard-section">
+            <div class="dashboard-section-header d-flex justify-content-between align-items-center">
+                <h3 class="mb-0">
+                    <i class="fas fa-chalkboard-teacher me-2"></i>My Classes
+                </h3>
+                <a href="{{ url_for('class_management.create_class') }}" class="btn btn-success btn-sm">
+                    <i class="fas fa-plus me-2"></i>New Class
+                </a>
+            </div>
+            <div class="class-list">
+                {% if classes %}
+                <div class="list-group">
+                    {% for class_id, class in classes.items() %}
+                    <a href="#" class="list-group-item list-group-item-action class-item" 
+                       data-class-id="{{ class_id }}" 
+                       data-class-name="{{ class.name }}">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-1">{{ class.name }}</h6>
+                                <small class="text-muted">{{ class.students|length }} students</small>
+                            </div>
+                            <i class="fas fa-chevron-right"></i>
                         </div>
-                        <div class="col-auto">
-                            <a href="{{ url_for('codex.view_codex_of_conduct') }}" class="btn btn-primary me-2">
-                                <i class="fas fa-scroll me-2"></i>Codex of Conduct
-                            </a>
-                            <a href="{{ url_for('auth.logout') }}" class="btn btn-outline-light">
-                                <i class="fas fa-sign-out-alt me-2"></i>Logout
-                            </a>
-                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="text-center py-5">
+                    <i class="fas fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
+                    <h4>No Classes Created Yet</h4>
+                    <p class="text-muted">Create your first class to begin your teaching journey!</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Student Details Section -->
+    <div class="col-md-5">
+        <div class="dashboard-section">
+            <div class="dashboard-section-header">
+                <h3 class="mb-0">
+                    <i class="fas fa-users me-2"></i>Class Students
+                </h3>
+            </div>
+            <div id="student-details-container">
+                <div id="no-class-selected" class="text-center py-5">
+                    <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                    <h4>Select a Class</h4>
+                    <p class="text-muted">Choose a class from the list to view student details</p>
+                </div>
+                <div id="student-details-content" style="display: none;">
+                    <h4 id="selected-class-name" class="mb-3"></h4>
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Student</th>
+                                    <th>Character</th>
+                                    <th>Level</th>
+                                    <th>XP</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="student-list">
+                                <!-- Student data will be loaded here via JavaScript -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h3 class="card-title mb-0">
-                        <i class="fas fa-chalkboard-teacher me-2"></i>My Classes
-                    </h3>
-                </div>
-                <div class="card-body">
-                    {% if classes %}
-                    <div class="list-group">
-                        {% for class_id, class in classes.items() %}
-                        <div class="list-group-item">
-                            <div class="d-flex justify-content-between align-items-center">
-                                <div>
-                                    <h5 class="mb-1">{{ class.name }}</h5>
-                                    <p class="mb-1">{{ class.description }}</p>
-                                </div>
-                                <div>
-                                    <a href="{{ url_for('class_management.class_details', class_code=class_id) }}" class="btn btn-primary">
-                                        <i class="fas fa-eye me-2"></i>View Class
-                                    </a>
+    <!-- Codex of Conduct Section -->
+    <div class="col-md-4">
+        <div class="dashboard-section">
+            <div class="dashboard-section-header">
+                <h3 class="mb-0">
+                    <i class="fas fa-scroll me-2"></i>Codex of Conduct
+                </h3>
+            </div>
+            <div class="codex-content">
+                <a href="{{ url_for('codex.view_codex_of_conduct') }}" class="btn btn-primary w-100 mb-3" onclick="window.location.href=this.href; return false;">
+                    <i class="fas fa-book-open me-2"></i>View Full Codex
+                </a>
+                
+                <!-- Rewards Section -->
+                <div class="card mb-3">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-crown me-2"></i>Rewards
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <a href="{{ url_for('codex.view_create_reward') }}" class="btn btn-success btn-sm mb-3">
+                            <i class="fas fa-plus-circle me-2"></i>Add New Reward
+                        </a>
+                        <div class="list-group list-group-flush">
+                            {% for reward_id, reward in rewards.items() %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ reward.name }}</h6>
+                                        <p class="mb-1 small text-muted">{{ reward.description }}</p>
+                                        <div class="small">
+                                            {% if reward.xp %}<span class="badge bg-primary me-1">+{{ reward.xp }} XP</span>{% endif %}
+                                            {% if reward.health %}<span class="badge bg-success me-1">+{{ reward.health }} HP</span>{% endif %}
+                                            {% if reward.power %}<span class="badge bg-info me-1">+{{ reward.power }} Power</span>{% endif %}
+                                            {% if reward.gold %}<span class="badge bg-warning me-1">+{{ reward.gold }} Gold</span>{% endif %}
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
+                            {% else %}
+                            <p class="text-center text-muted my-3">No rewards created yet.</p>
+                            {% endfor %}
                         </div>
-                        {% endfor %}
                     </div>
-                    {% else %}
-                    <div class="text-center py-5">
-                        <i class="fas fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
-                        <h4>No Classes Created Yet</h4>
-                        <p class="text-muted">Create your first class to begin your teaching journey!</p>
+                </div>
+
+                <!-- Consequences Section -->
+                <div class="card mb-3">
+                    <div class="card-header bg-danger text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Consequences
+                        </h5>
                     </div>
-                    {% endif %}
-                    <div class="text-center mt-4">
-                        <a href="{{ url_for('class_management.create_class') }}" class="btn btn-success btn-lg">
-                            <i class="fas fa-plus me-2"></i>Create New Class
+                    <div class="card-body">
+                        <a href="{{ url_for('codex.view_create_consequence') }}" class="btn btn-danger btn-sm mb-3">
+                            <i class="fas fa-plus-circle me-2"></i>Add New Consequence
                         </a>
+                        <div class="list-group list-group-flush">
+                            {% for consequence_id, consequence in consequences.items() %}
+                            <div class="list-group-item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ consequence.name }}</h6>
+                                        <p class="mb-1 small text-muted">{{ consequence.description }}</p>
+                                        <div class="small">
+                                            {% if consequence.xp %}<span class="badge bg-primary me-1">-{{ consequence.xp|abs }} XP</span>{% endif %}
+                                            {% if consequence.health %}<span class="badge bg-success me-1">-{{ consequence.health|abs }} HP</span>{% endif %}
+                                            {% if consequence.power %}<span class="badge bg-info me-1">-{{ consequence.power|abs }} Power</span>{% endif %}
+                                            {% if consequence.gold %}<span class="badge bg-warning me-1">-{{ consequence.gold|abs }} Gold</span>{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% else %}
+                            <p class="text-center text-muted my-3">No consequences created yet.</p>
+                            {% endfor %}
+                        </div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Features Section -->
+        <div class="dashboard-section">
+            <div class="dashboard-section-header">
+                <h3 class="mb-0">
+                    <i class="fas fa-star me-2"></i>Quick Access
+                </h3>
+            </div>
+            <div class="quick-access-content">
+                <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-chart-bar me-2"></i>Class Analytics
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-tasks me-2"></i>Assignment Manager
+                    </a>
+                    <a href="#" class="list-group-item list-group-item-action">
+                        <i class="fas fa-bell me-2"></i>Notifications
+                    </a>
                 </div>
             </div>
         </div>
@@ -76,23 +213,11 @@
 .card {
     border: none;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease-in-out;
 }
 
-.card-header {
-    border-bottom: none;
-}
-
-.list-group-item {
-    border-left: none;
-    border-right: none;
-}
-
-.list-group-item:first-child {
-    border-top: none;
-}
-
-.list-group-item:last-child {
-    border-bottom: none;
+.card:hover {
+    transform: translateY(-5px);
 }
 
 .btn {
@@ -100,8 +225,172 @@
     padding: 8px 16px;
 }
 
-.btn-lg {
-    padding: 12px 24px;
+.list-group-item {
+    border: none;
+    margin-bottom: 5px;
+    border-radius: 10px !important;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.list-group-item:hover {
+    background-color: #f8f9fa;
+}
+
+.dashboard-section {
+    height: 100%;
+}
+
+.class-list .card {
+    height: 100%;
+}
+
+.quick-access-content .list-group-item {
+    padding: 1rem;
+}
+
+.character-thumbnail {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+.character-thumbnail-placeholder {
+    width: 40px;
+    height: 40px;
+    background-color: #f8f9fa;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
 }
 </style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle class selection
+    document.querySelectorAll('.class-item').forEach(item => {
+        item.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Remove active class from all items
+            document.querySelectorAll('.class-item').forEach(i => {
+                i.classList.remove('active');
+            });
+            
+            // Add active class to selected item
+            this.classList.add('active');
+            
+            // Get class ID and name
+            const classId = this.dataset.classId;
+            const className = this.dataset.className;
+            
+            // Update selected class name
+            document.getElementById('selected-class-name').textContent = className;
+            
+            // Show student details section
+            document.getElementById('no-class-selected').style.display = 'none';
+            document.getElementById('student-details-content').style.display = 'block';
+            
+            // Load student data
+            loadStudentData(classId);
+        });
+    });
+    
+    // Function to load student data
+    function loadStudentData(classId) {
+        // Add a try-catch block to handle potential extension errors
+        try {
+            fetch(`/api/class/${classId}/students`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        displayStudents(data.students);
+                    } else {
+                        console.error('Error loading students:', data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        } catch (error) {
+            console.error('Error in loadStudentData:', error);
+        }
+    }
+    
+    // Function to display students
+    function displayStudents(students) {
+        const tbody = document.getElementById('student-list');
+        tbody.innerHTML = '';
+        
+        students.forEach(student => {
+            const row = document.createElement('tr');
+            
+            // Student name
+            const nameCell = document.createElement('td');
+            nameCell.textContent = student.name;
+            row.appendChild(nameCell);
+            
+            // Character info
+            const characterCell = document.createElement('td');
+            if (student.character) {
+                characterCell.textContent = `${student.character.character_class} (${student.character.gender})`;
+            } else {
+                characterCell.textContent = 'No character';
+            }
+            row.appendChild(characterCell);
+            
+            // Level
+            const levelCell = document.createElement('td');
+            levelCell.textContent = student.character ? student.character.level : 'N/A';
+            row.appendChild(levelCell);
+            
+            // XP
+            const xpCell = document.createElement('td');
+            if (student.character) {
+                xpCell.textContent = `${student.character.xp} / ${student.character.next_level_xp}`;
+            } else {
+                xpCell.textContent = 'N/A';
+            }
+            row.appendChild(xpCell);
+            
+            // Actions
+            const actionsCell = document.createElement('td');
+            const deleteBtn = document.createElement('button');
+            deleteBtn.className = 'btn btn-danger btn-sm';
+            deleteBtn.textContent = 'Remove';
+            deleteBtn.onclick = () => deleteStudent(student.username);
+            actionsCell.appendChild(deleteBtn);
+            row.appendChild(actionsCell);
+            
+            tbody.appendChild(row);
+        });
+    }
+    
+    // Function to delete a student
+    window.deleteStudent = function(classId, username) {
+        if (confirm(`Are you sure you want to delete ${username}?`)) {
+            fetch(`/class/${classId}/student/${username}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload student data
+                    loadStudentData(classId);
+                } else {
+                    alert('Error deleting student: ' + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error deleting student. Please try again.');
+            });
+        }
+    };
+});
+</script>
 {% endblock %} 
