@@ -37,7 +37,8 @@ A local web application for gamifying classroom activities and tracking student 
    - Clicking "Create New Class"
    - Entering a class name
    - Uploading a CSV file with student credentials
-   - The CSV should have columns: `username` and `password`
+   - The CSV should have columns: `username`, `password`, and optionally `name`
+   - If `name` is not provided, the username will be used as the student's name
 
 ### For Students
 

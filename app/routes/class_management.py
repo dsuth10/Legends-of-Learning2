@@ -110,9 +110,9 @@ def download_template():
     
     # Create template DataFrame
     df = pd.DataFrame({
-        'username': ['student1', 'student2'],
-        'password': ['password1', 'password2'],
-        'name': ['Student 1', 'Student 2']
+        'username': ['student1', 'student2', 'student3'],
+        'password': ['password123', 'password456', 'password789'],
+        'name': ['Student One', 'Student Two', 'Student Three']
     })
     
     # Save to temporary file

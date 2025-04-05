@@ -1,4 +1,4 @@
-username,password
-student1,password123
-student2,password456
-student3,password789 
+username,password,name
+student1,password123,Student 1
+student2,password456,Student 2
+student3,password789,Student 3 

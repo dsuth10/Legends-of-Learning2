@@ -5,6 +5,12 @@
 {% block content %}
 <div class="row justify-content-center">
     <div class="col-md-6">
+        <div class="text-center mb-4">
+            <img src="{{ url_for('static', filename='images/legends_icon.png') }}" 
+                 alt="Legends of Learning" 
+                 class="img-fluid" 
+                 style="max-width: 200px; margin-bottom: 2rem;">
+        </div>
         <div class="card">
             <div class="card-body">
                 <h2 class="card-title text-center mb-4">Login</h2>
@@ -41,6 +47,14 @@
 .btn {
     border-radius: 20px;
     padding: 8px 16px;
+}
+
+.img-fluid {
+    transition: transform 0.3s ease;
+}
+
+.img-fluid:hover {
+    transform: scale(1.05);
 }
 </style>
 {% endblock %} 
