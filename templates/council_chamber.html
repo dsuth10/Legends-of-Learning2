@@ -74,7 +74,8 @@
                                     <td>
                                         <div class="progress" style="height: 20px;">
                                             {% set xp = student.character.get('xp', 0) %}
-                                            {% set next_level_xp = student.character.get('level', 1) * 1000 %}
+                                            {% set level = student.character.get('level', 1) %}
+                                            {% set next_level_xp = student.character.get('next_level_xp', level * 1000) %}
                                             {% set xp_percentage = (xp / next_level_xp) * 100 %}
                                             <div class="progress-bar bg-primary" role="progressbar" 
                                                  style="width: {{ xp_percentage }}%">
@@ -301,6 +302,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     const currentGold = parseInt(goldCell.textContent);
                     goldCell.textContent = currentGold + effects.gold;
                     
+                    // Update Level if level up occurred
+                    if (data.level_up) {
+                        const levelCell = row.querySelector('td:nth-child(3)');
+                        const currentLevel = parseInt(levelCell.textContent);
+                        levelCell.textContent = currentLevel + 1;
+                        
+                        // Show level up notification
+                        const notification = document.createElement('div');
+                        notification.className = 'alert alert-success alert-dismissible fade show';
+                        notification.innerHTML = `
+                            <strong>Level Up!</strong> ${row.querySelector('td:first-child').textContent} has reached level ${currentLevel + 1}!
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        `;
+                        document.querySelector('.container').insertBefore(notification, document.querySelector('.row'));
+                    }
+                    
                     // Reset the select
                     rewardSelect.value = '';
                 } else {
@@ -365,6 +382,22 @@ document.addEventListener('DOMContentLoaded', function() {
                     const goldCell = row.querySelector('td:nth-child(5)');
                     const currentGold = parseInt(goldCell.textContent);
                     goldCell.textContent = Math.max(0, currentGold + effects.gold);
+                    
+                    // Update Level if level up occurred
+                    if (data.level_up) {
+                        const levelCell = row.querySelector('td:nth-child(3)');
+                        const currentLevel = parseInt(levelCell.textContent);
+                        levelCell.textContent = currentLevel + 1;
+                        
+                        // Show level up notification
+                        const notification = document.createElement('div');
+                        notification.className = 'alert alert-success alert-dismissible fade show';
+                        notification.innerHTML = `
+                            <strong>Level Up!</strong> ${row.querySelector('td:first-child').textContent} has reached level ${currentLevel + 1}!
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        `;
+                        document.querySelector('.container').insertBefore(notification, document.querySelector('.row'));
+                    }
                     
                     // Reset the select
                     consequenceSelect.value = '';

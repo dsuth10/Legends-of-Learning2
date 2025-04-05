@@ -70,9 +70,10 @@
                             <td>
                                 {% if student.character %}
                                     <div class="progress" style="height: 20px;">
-                                        {% set xp_percentage = (student.character.xp / (student.character.level * 100)) * 100 %}
+                                        {% set next_level_xp = student.character.get_next_level_xp() %}
+                                        {% set xp_percentage = (student.character.xp / next_level_xp) * 100 %}
                                         <div class="progress-bar" role="progressbar" style="width: {{ xp_percentage }}%">
-                                            {{ student.character.xp }}/{{ student.character.level * 100 }} XP
+                                            {{ student.character.xp }}/{{ next_level_xp }} XP
                                         </div>
                                     </div>
                                 {% else %}
