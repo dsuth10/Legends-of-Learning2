@@ -1,23 +1,22 @@
 {
     "jd": {
-        "password": "scrypt:32768:8:1$dwJ76NKnu1ekXCzi$6f642786eec4fa70eccd5cc662179e90e56867365eedb2115a75ec9cabd2512a8eb4662c3490667e12695187d827f4286dba0afd1af80e58ad8969fd8b1325b6",
+        "password": "scrypt:32768:8:1$nLXRVImFyV5y40BS$6e7d03bb21b06f8650264ee24f921d2aaca184f64b7f849178ffe8e8957df1ff182515902d33b0e429d15527860051f0e1a43f4855f488d01538606d7735e736",
         "user_type": "teacher",
         "name": "jd"
     },
     "student1": {
-        "password": "scrypt:32768:8:1$MZJ0uFLsVarymxeH$b29623e82eaada898cb6331eec7b2684fa41e64e61fc9709fc909219742164a84969a70572bd4745086ccb1c28c7ab7ef049305488a5588c68bcd120725f74fb",
+        "password": "scrypt:32768:8:1$0IZKCEdiITIcLuJx$20a2713168f9dbf0677b2a05a12e42128b0b30a4db4244918f0a8c64a5df201865f21caeda42cfe00591e2998b7bbddef5352b75a4ca02d4ad48d5c504c262dd",
         "user_type": "student",
-        "name": "student1",
-        "password_hash": "scrypt:32768:8:1$IGtbpixIGLOWLfEj$98e05391fa527099139ecefa69c71c9291f734416650a9bbaa860678ea442efe843d391b0bcf5d5645c8d99902754ec41f693f839c9af18228e871d3a1e5b3f1"
+        "name": "Student 1"
     },
     "student2": {
-        "password": "scrypt:32768:8:1$iML6a5ziaQzb8uxN$c4657f7109ddbbaae2c51b9aa4cf11d80e4ef18062024fb6d525a07e3160c5d229d49b7fb83c5a50dfc66b1636ffb1cb90173e009ecad7732b11df09557e29f3",
+        "password": "scrypt:32768:8:1$rzXUUllywT4QKYHD$118de80b4dc75752aa6be911246cf2ebecba4207a4a6409d919916b4eaa74ab744d2ad3ccf7dd00c75b8a85dea0033e7ccb8b4b52f56e73b7a09498ec493efc5",
         "user_type": "student",
-        "name": "student2"
+        "name": "Student 2"
     },
     "student3": {
-        "password": "scrypt:32768:8:1$lrkEoWUkMA8QPTX3$c97083ea68310d15223059784613b985f85660debe129c322d20674cdcb45a923240275f9a95bad1f9b06f58b2aad0316496344598587fab1725cc4d61ae9389",
+        "password": "scrypt:32768:8:1$dmJKVqVIoV7Ug5VI$9112a7e1f3b1c0ac973699ba37e15cc0fe410b57811daad43ad45a799cc6652fa0bf98fd8bf388ecf80d33764baa427d7047158a9501d52767170789445a1a05",
         "user_type": "student",
-        "name": "student3"
+        "name": "Student 3 "
     }
 }
