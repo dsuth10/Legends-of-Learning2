@@ -10,6 +10,7 @@ from app.routes.dashboard import dashboard_bp
 from app.routes.character import character
 from app.routes.class_management import class_management_bp
 from app.routes.codex import codex_bp
+from app.routes.master_dashboard import master_dashboard_bp
 from app.models.user import User
 
 # Get the absolute path to the project root directory
@@ -32,6 +33,7 @@ app.register_blueprint(dashboard_bp)
 app.register_blueprint(character)
 app.register_blueprint(class_management_bp)
 app.register_blueprint(codex_bp, url_prefix='/codex')
+app.register_blueprint(master_dashboard_bp)
 
 # Ensure data directory exists
 if not os.path.exists('data'):
