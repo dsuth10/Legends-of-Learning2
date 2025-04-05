@@ -1,21 +1,22 @@
 {
     "jd": {
-        "password": "scrypt:32768:8:1$ldmKpQDXjdXPPEbx$509a617a1b324adf14d9afdb4df3cec1a6cdcd7347af2db22d4fe08ea01d8c44e3523f8824ac60225c50ca057e78325dcc61025da2a2bbae2de7c1f8fbebb3ed",
+        "password": "scrypt:32768:8:1$dwJ76NKnu1ekXCzi$6f642786eec4fa70eccd5cc662179e90e56867365eedb2115a75ec9cabd2512a8eb4662c3490667e12695187d827f4286dba0afd1af80e58ad8969fd8b1325b6",
         "user_type": "teacher",
         "name": "jd"
     },
     "student1": {
-        "password": "scrypt:32768:8:1$e8g1caxZ1ucWKkf0$a5e55fc27618fd3bfaf7f12cb6978027a96233be58fe29d2e9087e3e0d44b80c137bc28f2d1a5ed8fd01a51260ed49f5caf31a2f7157e1c2a9e4c34a007b905b",
+        "password": "scrypt:32768:8:1$MZJ0uFLsVarymxeH$b29623e82eaada898cb6331eec7b2684fa41e64e61fc9709fc909219742164a84969a70572bd4745086ccb1c28c7ab7ef049305488a5588c68bcd120725f74fb",
         "user_type": "student",
-        "name": "student1"
+        "name": "student1",
+        "password_hash": "scrypt:32768:8:1$IGtbpixIGLOWLfEj$98e05391fa527099139ecefa69c71c9291f734416650a9bbaa860678ea442efe843d391b0bcf5d5645c8d99902754ec41f693f839c9af18228e871d3a1e5b3f1"
     },
     "student2": {
-        "password": "scrypt:32768:8:1$2H5X5TX2jGTMSYt4$5adc7f30971ba0cc102263cabdce04efac522fb7fe10d0f64afe1664b8751fd10de032d1b8f17625d6240597e4ccdc377c10b1e1b61daa5edd80cf49de2d6a9b",
+        "password": "scrypt:32768:8:1$iML6a5ziaQzb8uxN$c4657f7109ddbbaae2c51b9aa4cf11d80e4ef18062024fb6d525a07e3160c5d229d49b7fb83c5a50dfc66b1636ffb1cb90173e009ecad7732b11df09557e29f3",
         "user_type": "student",
         "name": "student2"
     },
     "student3": {
-        "password": "scrypt:32768:8:1$HgmFuI04GfoSzocd$43a18b89502514c4c2893df1460de00453c9c4be51637d4c84dfd2b95fd753a7bf7521f792c500dfeae7658f08c2d5d0a95be118e6f2fbe7493740dab3bafece",
+        "password": "scrypt:32768:8:1$lrkEoWUkMA8QPTX3$c97083ea68310d15223059784613b985f85660debe129c322d20674cdcb45a923240275f9a95bad1f9b06f58b2aad0316496344598587fab1725cc4d61ae9389",
         "user_type": "student",
         "name": "student3"
     }

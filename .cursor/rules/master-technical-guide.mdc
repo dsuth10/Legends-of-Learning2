@@ -3,4 +3,6 @@ description:
 globs: 
 alwaysApply: true
 ---
+Where possible always use existing code structures and systems to create now features.
+Always make sure to preserve other code systems and structures when creating new features.
 Always follow the [TECHNICAL_DOCUMENTATION.md](mdc:TECHNICAL_DOCUMENTATION.md)

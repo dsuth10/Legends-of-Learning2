@@ -245,20 +245,16 @@ def assign_reward():
         return jsonify({'success': False, 'message': 'Reward not found'})
     
     reward = rewards[reward_id]
-    characters = load_characters()
+    character = Character.get(student_id)
     
-    if student_id not in characters:
+    if not character:
         return jsonify({'success': False, 'message': 'Student not found'})
     
-    character = characters[student_id]
-    
-    # Update character stats
-    character['xp'] = character.get('xp', 0) + reward.get('xp', 0)
-    character['health'] = min(100, character.get('health', 100) + reward.get('health', 0))
-    character['power'] = min(100, character.get('power', 50) + reward.get('power', 0))
-    character['gold'] = character.get('gold', 0) + reward.get('gold', 0)
-    
-    save_characters(characters)
+    # Update character stats using the Character model methods
+    new_level = character.add_xp(reward.get('xp', 0))
+    character.add_health(reward.get('health', 0))
+    character.add_power(reward.get('power', 0))
+    character.add_gold(reward.get('gold', 0))
     
     return jsonify({
         'success': True,
@@ -267,7 +263,8 @@ def assign_reward():
             'health': reward.get('health', 0),
             'power': reward.get('power', 0),
             'gold': reward.get('gold', 0)
-        }
+        },
+        'level_up': new_level > character.level
     })
 
 @codex_bp.route('/api/consequences/assign', methods=['POST'])
@@ -288,20 +285,16 @@ def assign_consequence():
         return jsonify({'success': False, 'message': 'Consequence not found'})
     
     consequence = consequences[consequence_id]
-    characters = load_characters()
+    character = Character.get(student_id)
     
-    if student_id not in characters:
+    if not character:
         return jsonify({'success': False, 'message': 'Student not found'})
     
-    character = characters[student_id]
-    
-    # Update character stats
-    character['xp'] = max(0, character.get('xp', 0) + consequence.get('xp', 0))
-    character['health'] = max(0, character.get('health', 100) + consequence.get('health', 0))
-    character['power'] = max(0, character.get('power', 50) + consequence.get('power', 0))
-    character['gold'] = max(0, character.get('gold', 0) + consequence.get('gold', 0))
-    
-    save_characters(characters)
+    # Update character stats using the Character model methods
+    new_level = character.add_xp(consequence.get('xp', 0))
+    character.add_health(consequence.get('health', 0))
+    character.add_power(consequence.get('power', 0))
+    character.add_gold(consequence.get('gold', 0))
     
     return jsonify({
         'success': True,
@@ -310,5 +303,6 @@ def assign_consequence():
             'health': consequence.get('health', 0),
             'power': consequence.get('power', 0),
             'gold': consequence.get('gold', 0)
-        }
+        },
+        'level_up': new_level > character.level
     }) 

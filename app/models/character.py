@@ -16,6 +16,39 @@ class Character:
         self.created_at = datetime.now().isoformat()
 
     @staticmethod
+    def load_level_progression():
+        try:
+            with open('data/level_progression.json', 'r') as f:
+                return json.load(f)
+        except FileNotFoundError:
+            return {
+                "level_requirements": {"1": 0, "2": 1000},
+                "level_benefits": {"2": {"health_bonus": 20, "power_bonus": 10}}
+            }
+
+    def get_next_level_xp(self):
+        progression = self.load_level_progression()
+        next_level = str(self.level + 1)
+        return progression["level_requirements"].get(next_level, self.level * 1000)
+
+    def check_level_up(self):
+        progression = self.load_level_progression()
+        next_level = str(self.level + 1)
+        
+        if next_level in progression["level_requirements"]:
+            required_xp = progression["level_requirements"][next_level]
+            if self.xp >= required_xp:
+                # Apply level up benefits
+                if next_level in progression["level_benefits"]:
+                    benefits = progression["level_benefits"][next_level]
+                    self.health = min(100, self.health + benefits.get("health_bonus", 0))
+                    self.power = min(100, self.power + benefits.get("power_bonus", 0))
+                
+                self.level = int(next_level)
+                return True
+        return False
+
+    @staticmethod
     def get(username):
         characters = Character.load_characters()
         if username in characters:
@@ -64,8 +97,9 @@ class Character:
 
     def add_xp(self, amount):
         self.xp += amount
-        # Level up logic can be added here
-        self.save()
+        if self.check_level_up():
+            self.save()
+        return self.level
 
     def add_health(self, amount):
         self.health = min(100, self.health + amount)

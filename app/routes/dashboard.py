@@ -38,8 +38,8 @@ def student_dashboard():
     if not character:
         return redirect(url_for('character.character_creation'))
     
-    # Calculate progress to next level
-    next_level_xp = character.level * 1000  # Simple XP calculation
+    # Calculate progress to next level using the new progression system
+    next_level_xp = character.get_next_level_xp()
     progress = (character.xp / next_level_xp) * 100 if next_level_xp > 0 else 0
     
     return render_template('student_dashboard.html',
@@ -52,4 +52,4 @@ def student_dashboard():
                          health=character.health,
                          power=character.power,
                          gold=character.gold,
-                         image=f"{character.image_number}_{character.character_class}_{character.gender}_level1.png") 
+                         image=f"{character.image_number}_{character.character_class}_{character.gender}_level{character.level}.png") 

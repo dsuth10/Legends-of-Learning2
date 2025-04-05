@@ -1,0 +1,27 @@
+{
+    "level_requirements": {
+        "1": 0,
+        "2": 1000,
+        "3": 2000,
+        "4": 3000,
+        "5": 4000
+    },
+    "level_benefits": {
+        "2": {
+            "health_bonus": 20,
+            "power_bonus": 10
+        },
+        "3": {
+            "health_bonus": 40,
+            "power_bonus": 20
+        },
+        "4": {
+            "health_bonus": 60,
+            "power_bonus": 30
+        },
+        "5": {
+            "health_bonus": 80,
+            "power_bonus": 40
+        }
+    }
+} 

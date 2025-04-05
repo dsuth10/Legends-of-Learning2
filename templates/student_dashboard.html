@@ -7,7 +7,7 @@
     <div class="col-12">
         <div class="card">
             <div class="card-body text-center">
-                <img src="{{ url_for('static', filename='images/characters/' + character_class + '/' + gender + '/level1/' + image) }}" 
+                <img src="{{ url_for('static', filename='images/characters/' + character_class + '/' + gender + '/level' + level|string + '/' + image) }}" 
                      alt="Your Character" 
                      class="img-fluid character-image mb-3">
                 <h2 class="mt-2">{{ character_class|title }}</h2>
